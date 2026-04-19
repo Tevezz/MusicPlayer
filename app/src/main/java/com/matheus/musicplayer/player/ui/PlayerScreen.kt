@@ -33,6 +33,7 @@ import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 @Composable
 fun PlayerScreen(
     viewModel: PlayerViewModel,
+    onNavigateToAlbum: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -114,7 +115,7 @@ fun PlayerScreen(
             AlbumBottomSheet(
                 song = song,
                 onDismiss = { isShowAlbumBottomSheet = false },
-                onViewAlbumClick = {}
+                onViewAlbumClick = onNavigateToAlbum
             )
         }
     }

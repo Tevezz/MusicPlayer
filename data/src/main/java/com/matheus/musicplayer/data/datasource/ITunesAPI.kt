@@ -1,5 +1,6 @@
 package com.matheus.musicplayer.data.datasource
 
+import com.matheus.musicplayer.data.model.ITunesLookupResponseDto
 import com.matheus.musicplayer.data.model.ITunesSearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,4 +14,10 @@ internal interface ITunesAPI {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): ITunesSearchResponseDto
+
+    @GET("lookup")
+    suspend fun lookupAlbum(
+        @Query("id") collectionId: Long,
+        @Query("entity") entity: String = "song"
+    ): ITunesLookupResponseDto
 }

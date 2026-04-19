@@ -9,6 +9,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.matheus.musicplayer.album.AlbumScreen
 import com.matheus.musicplayer.player.Cache
 import com.matheus.musicplayer.player.ui.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
@@ -44,6 +45,13 @@ class MainActivity : ComponentActivity() {
                                         factory.create(key)
                                     }
                                 ),
+                                onNavigateToAlbum = { backStack.add(Route.Album) },
+                                onNavigateBack = { backStack.removeLastOrNull() }
+                            )
+                        }
+                        entry<Route.Album> {
+                            AlbumScreen(
+                                viewModel = hiltViewModel(),
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }

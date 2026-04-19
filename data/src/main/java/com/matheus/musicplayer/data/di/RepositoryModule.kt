@@ -1,6 +1,8 @@
 package com.matheus.musicplayer.data.di
 
+import com.matheus.musicplayer.data.repository.AlbumRepositoryImpl
 import com.matheus.musicplayer.data.repository.SongRepositoryImpl
+import com.matheus.musicplayer.domain.repository.AlbumRepository
 import com.matheus.musicplayer.domain.repository.SongRepository
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,8 @@ internal abstract class RepositoryModule {
         impl: SongRepositoryImpl
     ): SongRepository
 
+    @Binds
+    internal abstract fun bindsAlbumRepository(
+        impl: AlbumRepositoryImpl
+    ): AlbumRepository
 }

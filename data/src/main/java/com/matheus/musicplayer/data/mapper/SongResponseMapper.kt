@@ -15,9 +15,10 @@ internal fun List<SongResponseDto>.toSongList(): List<Song> {
 
 internal fun SongResponseDto.toSong(): Song {
     return Song(
-        trackId = trackId ?: throw IllegalArgumentException(),
+        trackId = trackId!!,
         trackName = trackName,
         artistName = artistName,
+        collectionId = collectionId,
         collectionName = collectionName,
         artworkUrl100 = artworkUrl100,
         previewUrl = previewUrl,
