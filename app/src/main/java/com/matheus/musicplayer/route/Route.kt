@@ -10,4 +10,9 @@ sealed interface Route : NavKey {
     @Serializable
     data object SongList : NavKey
 
+    @Serializable
+    data class Player(
+        val trackId: Long
+    ) : NavKey
+
 }

@@ -1,10 +1,11 @@
-package com.matheus.musicplayer.song
+package com.matheus.musicplayer.song.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
+import com.matheus.musicplayer.player.Cache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,10 @@ class SongListViewModel @Inject constructor(
         when (action) {
             is SongListAction.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = action.searchQuery) }
+            }
+
+            is SongListAction.OnSongClick -> {
+                Cache.song = action.song
             }
         }
     }

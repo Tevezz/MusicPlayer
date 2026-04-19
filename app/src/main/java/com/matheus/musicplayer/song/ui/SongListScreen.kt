@@ -1,19 +1,14 @@
-package com.matheus.musicplayer.song
+package com.matheus.musicplayer.song.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,15 +27,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
-import com.matheus.musicplayer.domain.model.Song
-import com.matheus.musicplayer.ui.theme.SongArtist
+import com.matheus.musicplayer.song.viewmodel.SongListAction
+import com.matheus.musicplayer.song.viewmodel.SongListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongListScreen(
-    viewModel: SongListViewModel = hiltViewModel()
+    viewModel: SongListViewModel = hiltViewModel(),
+    onNavigateToPlayer: () -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -113,7 +107,10 @@ fun SongListScreen(
                                 key = songs.itemKey { it.trackId }
                             ) { index ->
                                 songs[index]?.let { song ->
-                                    SongItem(song)
+                                    SongListItem(song) {
+                                        viewModel.onAction(SongListAction.OnSongClick(it))
+                                        onNavigateToPlayer()
+                                    }
                                 }
                             }
 
@@ -146,48 +143,6 @@ fun SongListScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun SongItem(song: Song) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        AsyncImage(
-            model = song.artworkUrl100,
-            contentDescription = song.trackName,
-            modifier = Modifier
-                .size(52.dp)
-                .clip(RoundedCornerShape(8.dp))
-        )
-
-        Spacer(Modifier.width(16.dp))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = song.trackName.orEmpty(),
-                style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
-                maxLines = 1
-            )
-
-            Text(
-                text = song.artistName.orEmpty(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = SongArtist,
-                maxLines = 1
-            )
         }
     }
 }

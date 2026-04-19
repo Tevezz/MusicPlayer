@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.song
+package com.matheus.musicplayer.song.viewmodel
 
 import androidx.paging.PagingData
 import com.matheus.musicplayer.domain.model.Song

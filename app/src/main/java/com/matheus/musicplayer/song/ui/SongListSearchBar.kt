@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.song
+package com.matheus.musicplayer.song.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
