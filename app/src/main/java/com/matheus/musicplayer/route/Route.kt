@@ -16,5 +16,7 @@ sealed interface Route : NavKey {
     ) : NavKey
 
     @Serializable
-    data object Album : NavKey
+    data class Album(
+        val trackId: Long
+    ) : NavKey
 }

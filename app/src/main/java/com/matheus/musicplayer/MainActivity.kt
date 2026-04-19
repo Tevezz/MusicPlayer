@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.matheus.musicplayer.album.AlbumScreen
+import com.matheus.musicplayer.album.AlbumViewModel
 import com.matheus.musicplayer.player.ui.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 import com.matheus.musicplayer.route.Route
@@ -47,13 +48,17 @@ class MainActivity : ComponentActivity() {
                                         factory.create(key)
                                     }
                                 ),
-                                onNavigateToAlbum = { backStack.add(Route.Album) },
+                                onNavigateToAlbum = { backStack.add(Route.Album(it)) },
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }
-                        entry<Route.Album> {
+                        entry<Route.Album> { key ->
                             AlbumScreen(
-                                viewModel = hiltViewModel(),
+                                viewModel = hiltViewModel<AlbumViewModel, AlbumViewModel.Factory>(
+                                    creationCallback = { factory ->
+                                        factory.create(key)
+                                    }
+                                ),
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }

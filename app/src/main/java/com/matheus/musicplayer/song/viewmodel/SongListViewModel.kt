@@ -8,7 +8,6 @@ import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
-import com.matheus.musicplayer.player.Cache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,7 +78,6 @@ class SongListViewModel @Inject constructor(
     }
 
     private fun handleSongClick(song: Song) = viewModelScope.launch {
-        Cache.song = song // TODO Remove to use local
         saveRecentlyPlayedUseCase(song)
         _events.send(SongListEvent.NavToPlayer(song.trackId))
     }
