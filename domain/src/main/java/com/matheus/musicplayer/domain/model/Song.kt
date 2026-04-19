@@ -1,7 +1,7 @@
-package com.matheus.musicplayer.data.model
+package com.matheus.musicplayer.domain.model
 
-internal data class SongResponseDto(
-    val trackId: Long?,
+data class Song(
+    val trackId: Long,
     val trackName: String?,
     val artistName: String?,
     val collectionName: String?,

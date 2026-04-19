@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,7 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,9 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
-import com.matheus.musicplayer.data.model.SongResponseDto
+import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.ui.theme.SongArtist
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,12 +39,7 @@ fun SongListScreen(
     viewModel: SongListViewModel = hiltViewModel()
 ) {
 
-    val songs = viewModel.songs
-    val isLoading = viewModel.isLoading
-
-    LaunchedEffect(Unit) {
-        viewModel.loadSongs()
-    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -62,8 +57,10 @@ fun SongListScreen(
                 modifier = Modifier.padding(vertical = 20.dp)
             )
             SongSearchBar(
-                searchQuery = "",
-                onSearchQueryChanged = {},
+                searchQuery = state.searchQuery,
+                onSearchQueryChanged = {
+                    viewModel.onAction(SongListAction.OnSearchQueryChange(it))
+                },
                 onImeSearch = {},
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -71,13 +68,13 @@ fun SongListScreen(
             Box(modifier = Modifier.fillMaxSize()) {
 
                 when {
-                    isLoading -> {
+                    state.isLoading -> {
                         CircularProgressIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
-                    songs.isEmpty() -> {
+                    state.songs.isEmpty() -> {
                         Text(
                             text = "No songs found",
                             modifier = Modifier.align(Alignment.Center)
@@ -86,7 +83,7 @@ fun SongListScreen(
 
                     else -> {
                         LazyColumn {
-                            items(songs) { song ->
+                            items(state.songs) { song ->
                                 SongItem(song)
                             }
                         }
@@ -99,7 +96,7 @@ fun SongListScreen(
 }
 
 @Composable
-fun SongItem(song: SongResponseDto) {
+fun SongItem(song: Song) {
 
     Row(
         modifier = Modifier

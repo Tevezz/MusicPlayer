@@ -42,8 +42,11 @@ fun SongSearchBar(
         colors = OutlinedTextFieldDefaults.colors(
             cursorColor = Color.White,
             focusedBorderColor = Color.Transparent,
-            unfocusedBorderColor = Color.Transparent
+            unfocusedBorderColor = Color.Transparent,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White
         ),
+        textStyle = MaterialTheme.typography.labelMedium,
         singleLine = true,
         placeholder = {
             Text(

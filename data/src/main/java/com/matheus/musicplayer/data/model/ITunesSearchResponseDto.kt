@@ -1,6 +1,6 @@
 package com.matheus.musicplayer.data.model
 
-data class ITunesSearchResponseDto( // TODO possibly internal
+internal data class ITunesSearchResponseDto(
     val resultCount: Int,
     val results: List<SongResponseDto>
 )
