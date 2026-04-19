@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PlayerTopBar(
     title: String,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onOptionsClick: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -38,7 +39,7 @@ fun PlayerTopBar(
             }
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = onOptionsClick) {
                 Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White)
             }
         },

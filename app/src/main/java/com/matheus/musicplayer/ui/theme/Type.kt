@@ -37,3 +37,18 @@ val Typography = Typography(
         letterSpacing = 0.sp
     )
 )
+
+val AlbumBottomSheetTitle = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 18.sp,
+    lineHeight = 19.44.sp,
+    letterSpacing = 0.sp
+)
+
+val AlbumBottomSheetSubtitle = TextStyle(
+    fontWeight = FontWeight.Medium,
+    fontSize = 14.sp,
+    lineHeight = 16.8.sp,
+    letterSpacing = 0.sp
+)

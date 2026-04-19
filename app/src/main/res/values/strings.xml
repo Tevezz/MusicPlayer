@@ -4,4 +4,5 @@
     <string name="songs_title">Songs</string>
     <string name="search_placeholder">Search</string>
     <string name="now_playing">Now playing</string>
+    <string name="view_album">View album</string>
 </resources>

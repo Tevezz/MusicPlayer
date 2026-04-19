@@ -41,7 +41,6 @@ class PlayerViewModel @AssistedInject constructor(
 
     init {
         observePlayer()
-        play()
     }
 
     private fun observePlayer() {

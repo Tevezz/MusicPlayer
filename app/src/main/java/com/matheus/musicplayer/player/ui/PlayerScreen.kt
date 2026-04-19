@@ -14,6 +14,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
+import com.matheus.musicplayer.album.AlbumBottomSheet
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,13 +39,17 @@ fun PlayerScreen(
     val song = state.song ?: return
 
     val artwork = song.artworkUrl100?.replace("100x100", "600x600")
+    var isShowAlbumBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = Color.Black,
         topBar = {
             PlayerTopBar(
                 title = stringResource(R.string.now_playing),
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onOptionsClick = {
+                    isShowAlbumBottomSheet = true
+                }
             )
         }
     ) { padding ->
@@ -99,6 +107,14 @@ fun PlayerScreen(
             PlayerControls(
                 isPlaying = state.isPlaying,
                 onPlayPauseClick = { viewModel.onPlayPause() }
+            )
+        }
+
+        if (isShowAlbumBottomSheet) {
+            AlbumBottomSheet(
+                song = song,
+                onDismiss = { isShowAlbumBottomSheet = false },
+                onViewAlbumClick = {}
             )
         }
     }
