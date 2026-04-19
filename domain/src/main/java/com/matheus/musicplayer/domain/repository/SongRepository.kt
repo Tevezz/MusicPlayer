@@ -6,4 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SongRepository {
     fun searchSongs(searchQuery: String): Flow<PagingData<Song>>
+    fun getRecentlyPlayed(): Flow<PagingData<Song>>
+
+    suspend fun saveRecentlyPlayed(song: Song)
 }

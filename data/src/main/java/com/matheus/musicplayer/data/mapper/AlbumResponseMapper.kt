@@ -1,7 +1,7 @@
 package com.matheus.musicplayer.data.mapper
 
-import com.matheus.musicplayer.data.model.LookupItemResponseDto
-import com.matheus.musicplayer.data.model.LookupResponseType
+import com.matheus.musicplayer.data.model.remote.LookupItemResponseDto
+import com.matheus.musicplayer.data.model.remote.LookupResponseType
 import com.matheus.musicplayer.domain.model.Album
 import com.matheus.musicplayer.domain.model.Song
 

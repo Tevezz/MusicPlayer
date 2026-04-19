@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.matheus.musicplayer.domain.model.Song
+import com.matheus.musicplayer.domain.usecase.GetRecentlyPlayedUseCase
+import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
 import com.matheus.musicplayer.player.Cache
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +18,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SongListViewModel @Inject constructor(
-    private val searchSongsUseCase: SearchSongsUseCase
+    private val searchSongsUseCase: SearchSongsUseCase,
+    private val getRecentlyPlayedUseCase: GetRecentlyPlayedUseCase,
+    private val saveRecentlyPlayedUseCase: SaveRecentlyPlayedUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SongListState())
@@ -36,7 +42,8 @@ class SongListViewModel @Inject constructor(
             }
 
             is SongListAction.OnSongClick -> {
-                Cache.song = action.song
+                Cache.song = action.song // TODO Remove to use local
+                saveSongToRecentlyPlayed(action.song)
             }
         }
     }
@@ -48,19 +55,26 @@ class SongListViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .debounce(500)
                 .flatMapLatest { query ->
+                    when {
+                        query.isBlank() -> {
+                            getRecentlyPlayedUseCase()
+                        }
 
-                    val effectiveQuery = when {
-                        query.isBlank() -> "top hits"
-                        query.length < 2 -> null
-                        else -> query
+                        query.length < 2 -> {
+                            flowOf(PagingData.empty())
+                        }
+
+                        else -> {
+                            searchSongsUseCase(query)
+                        }
                     }
-
-                    effectiveQuery?.let {
-                        searchSongsUseCase(it)
-                    } ?: flowOf(PagingData.empty())
                 }
                 .cachedIn(viewModelScope)
 
         _state.update { it.copy(songs = pagingFlow) }
+    }
+
+    private fun saveSongToRecentlyPlayed(song: Song) = viewModelScope.launch {
+        saveRecentlyPlayedUseCase(song)
     }
 }

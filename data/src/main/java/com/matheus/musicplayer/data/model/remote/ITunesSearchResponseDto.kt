@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.data.model
+package com.matheus.musicplayer.data.model.remote
 
 internal data class ITunesSearchResponseDto(
     val resultCount: Int,

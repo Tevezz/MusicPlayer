@@ -1,7 +1,7 @@
 package com.matheus.musicplayer.data.datasource
 
-import com.matheus.musicplayer.data.model.ITunesLookupResponseDto
-import com.matheus.musicplayer.data.model.ITunesSearchResponseDto
+import com.matheus.musicplayer.data.model.remote.ITunesLookupResponseDto
+import com.matheus.musicplayer.data.model.remote.ITunesSearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

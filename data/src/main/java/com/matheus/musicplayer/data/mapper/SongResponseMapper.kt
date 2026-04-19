@@ -1,6 +1,6 @@
 package com.matheus.musicplayer.data.mapper
 
-import com.matheus.musicplayer.data.model.SongResponseDto
+import com.matheus.musicplayer.data.model.remote.SongResponseDto
 import com.matheus.musicplayer.domain.model.Song
 
 internal fun List<SongResponseDto>.toSongList(): List<Song> {
