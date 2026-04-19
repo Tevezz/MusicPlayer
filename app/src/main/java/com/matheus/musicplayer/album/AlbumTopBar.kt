@@ -24,7 +24,8 @@ fun AlbumTopBar(
             Text(
                 text = title,
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp)
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp),
+                maxLines = 1
             )
         },
         navigationIcon = {
