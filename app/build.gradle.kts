@@ -67,6 +67,10 @@ dependencies {
     implementation(libs.hilt.navigation)
     ksp(libs.hilt.android.compiler)
 
+    // Paging
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+
     // Splash Screen
     implementation(libs.splash.screen)
 

@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.domain.model.Song
@@ -40,6 +45,7 @@ fun SongListScreen(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val songs = state.songs.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -68,28 +74,77 @@ fun SongListScreen(
             Box(modifier = Modifier.fillMaxSize()) {
 
                 when {
-                    state.isLoading -> {
+                    // Initial load
+                    songs.loadState.refresh is LoadState.Loading -> {
                         CircularProgressIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
-                    state.songs.isEmpty() -> {
+                    // Error on first load
+                    songs.loadState.refresh is LoadState.Error -> {
+                        val error = songs.loadState.refresh as LoadState.Error
+
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Something went wrong")
+                            Spacer(Modifier.height(8.dp))
+                            Button(onClick = { songs.retry() }) {
+                                Text("Retry")
+                            }
+                        }
+                    }
+
+                    // Empty state
+                    songs.itemCount == 0 -> {
                         Text(
                             text = "No songs found",
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
+                    // Content
                     else -> {
                         LazyColumn {
-                            items(state.songs) { song ->
-                                SongItem(song)
+                            items(
+                                count = songs.itemCount,
+                                key = songs.itemKey { it.trackId }
+                            ) { index ->
+                                songs[index]?.let { song ->
+                                    SongItem(song)
+                                }
+                            }
+
+                            // Pagination loading
+                            if (songs.loadState.append is LoadState.Loading) {
+                                item {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                            .wrapContentWidth(Alignment.CenterHorizontally)
+                                    )
+                                }
+                            }
+
+                            // Pagination error
+                            if (songs.loadState.append is LoadState.Error) {
+                                item {
+                                    Button(
+                                        onClick = { songs.retry() },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                    ) {
+                                        Text("Retry")
+                                    }
+                                }
                             }
                         }
                     }
                 }
-
             }
         }
     }

@@ -12,6 +12,10 @@ kotlin {
     }
 }
 dependencies {
+
+    // Paging
+    implementation(libs.androidx.paging.common)
+
     implementation(libs.javax.inject)
     testImplementation(libs.junit)
 }
