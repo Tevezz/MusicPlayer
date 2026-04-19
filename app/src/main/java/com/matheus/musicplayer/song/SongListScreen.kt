@@ -1,11 +1,13 @@
 package com.matheus.musicplayer.song
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,10 +24,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.matheus.musicplayer.R
 import com.matheus.musicplayer.data.model.SongResponseDto
+import com.matheus.musicplayer.ui.theme.SongArtist
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,77 +50,90 @@ fun SongListScreen(
         modifier = Modifier.fillMaxSize()
     ) { contentPadding ->
 
-        Box(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(horizontal = 20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.songs_title),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White,
+                modifier = Modifier.padding(vertical = 20.dp)
+            )
+            SongSearchBar(
+                searchQuery = "",
+                onSearchQueryChanged = {},
+                onImeSearch = {},
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-            when {
-                isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+            Box(modifier = Modifier.fillMaxSize()) {
 
-                songs.isEmpty() -> {
-                    Text(
-                        text = "No songs found",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+                when {
+                    isLoading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
 
-                else -> {
-                    LazyColumn {
-                        items(songs) { song ->
-                            SongItem(song)
+                    songs.isEmpty() -> {
+                        Text(
+                            text = "No songs found",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    else -> {
+                        LazyColumn {
+                            items(songs) { song ->
+                                SongItem(song)
+                            }
                         }
                     }
                 }
+
             }
-
         }
-
     }
-
 }
 
 @Composable
 fun SongItem(song: SongResponseDto) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         AsyncImage(
             model = song.artworkUrl100,
             contentDescription = song.trackName,
-            onLoading = {
-                println("Loading")
-            },
-            onSuccess = {
-                println("Success")
-            },
-            onError = {
-                println("Error loading: ${it}")
-            },
             modifier = Modifier
-                .size(64.dp)
+                .size(52.dp)
                 .clip(RoundedCornerShape(8.dp))
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(Modifier.width(16.dp))
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = song.trackName ?: "Unknown",
-                style = MaterialTheme.typography.bodyLarge,
+                text = song.trackName.orEmpty(),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White,
                 maxLines = 1
             )
 
             Text(
-                text = song.artistName ?: "Unknown Artist",
+                text = song.artistName.orEmpty(),
                 style = MaterialTheme.typography.bodyMedium,
+                color = SongArtist,
                 maxLines = 1
             )
         }
