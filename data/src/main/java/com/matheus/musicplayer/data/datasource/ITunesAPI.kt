@@ -4,7 +4,7 @@ import com.matheus.musicplayer.data.model.ITunesSearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-internal interface ITunesAPI {
+interface ITunesAPI { // TODO Make internal
 
     @GET("search")
     suspend fun searchSongs(
