@@ -17,5 +17,5 @@ internal interface SongDao {
     suspend fun upsert(song: SongEntity)
 
     @Query("SELECT * FROM songs WHERE trackId = :id")
-    suspend fun getSong(id: Long): SongEntity?
+    suspend fun getSong(id: Long): SongEntity
 }

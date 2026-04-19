@@ -7,6 +7,7 @@ import com.matheus.musicplayer.data.datasource.ITunesAPI
 import com.matheus.musicplayer.data.datasource.SongDao
 import com.matheus.musicplayer.data.datasource.SongPagingSource
 import com.matheus.musicplayer.data.mapper.toEntity
+import com.matheus.musicplayer.data.mapper.toSong
 import com.matheus.musicplayer.data.mapper.toSongList
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.repository.SongRepository
@@ -41,5 +42,9 @@ internal class SongRepositoryImpl @Inject constructor(
     override suspend fun saveRecentlyPlayed(song: Song) {
         val entity = song.toEntity()
         songDao.upsert(entity)
+    }
+
+    override suspend fun getSong(trackId: Long): Song {
+        return songDao.getSong(trackId).toSong()
     }
 }

@@ -29,17 +29,25 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.song.viewmodel.SongListAction
+import com.matheus.musicplayer.song.viewmodel.SongListEvent
 import com.matheus.musicplayer.song.viewmodel.SongListViewModel
+import com.matheus.musicplayer.util.ObserveAsEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongListScreen(
     viewModel: SongListViewModel = hiltViewModel(),
-    onNavigateToPlayer: () -> Unit
+    onNavigateToPlayer: (Long) -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val songs = state.songs.collectAsLazyPagingItems()
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is SongListEvent.NavToPlayer -> onNavigateToPlayer(event.trackId)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -109,7 +117,6 @@ fun SongListScreen(
                                 songs[index]?.let { song ->
                                     SongListItem(song) {
                                         viewModel.onAction(SongListAction.OnSongClick(it))
-                                        onNavigateToPlayer()
                                     }
                                 }
                             }

@@ -10,6 +10,7 @@ import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
 import com.matheus.musicplayer.player.Cache
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +29,9 @@ class SongListViewModel @Inject constructor(
     private val getRecentlyPlayedUseCase: GetRecentlyPlayedUseCase,
     private val saveRecentlyPlayedUseCase: SaveRecentlyPlayedUseCase
 ) : ViewModel() {
+
+    private val _events = Channel<SongListEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     private val _state = MutableStateFlow(SongListState())
     val state = _state.asStateFlow()
@@ -42,8 +47,7 @@ class SongListViewModel @Inject constructor(
             }
 
             is SongListAction.OnSongClick -> {
-                Cache.song = action.song // TODO Remove to use local
-                saveSongToRecentlyPlayed(action.song)
+                handleSongClick(action.song)
             }
         }
     }
@@ -74,7 +78,9 @@ class SongListViewModel @Inject constructor(
         _state.update { it.copy(songs = pagingFlow) }
     }
 
-    private fun saveSongToRecentlyPlayed(song: Song) = viewModelScope.launch {
+    private fun handleSongClick(song: Song) = viewModelScope.launch {
+        Cache.song = song // TODO Remove to use local
         saveRecentlyPlayedUseCase(song)
+        _events.send(SongListEvent.NavToPlayer(song.trackId))
     }
 }

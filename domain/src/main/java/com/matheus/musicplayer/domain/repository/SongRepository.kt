@@ -9,4 +9,5 @@ interface SongRepository {
     fun getRecentlyPlayed(): Flow<PagingData<Song>>
 
     suspend fun saveRecentlyPlayed(song: Song)
+    suspend fun getSong(trackId: Long): Song
 }
