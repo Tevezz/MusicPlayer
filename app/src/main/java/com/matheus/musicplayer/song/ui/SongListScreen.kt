@@ -2,14 +2,11 @@ package com.matheus.musicplayer.song.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -40,8 +37,8 @@ fun SongListScreen(
     onNavigateToPlayer: (Long) -> Unit
 ) {
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val songs = state.songs.collectAsLazyPagingItems()
+    val songs = viewModel.songs.collectAsLazyPagingItems()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -65,7 +62,7 @@ fun SongListScreen(
                 modifier = Modifier.padding(vertical = 20.dp)
             )
             SongSearchBar(
-                searchQuery = state.searchQuery,
+                searchQuery = searchQuery,
                 onSearchQueryChanged = {
                     viewModel.onAction(SongListAction.OnSearchQueryChange(it))
                 },
@@ -76,38 +73,19 @@ fun SongListScreen(
             Box(modifier = Modifier.fillMaxSize()) {
 
                 when {
-                    // Initial load
                     songs.loadState.refresh is LoadState.Loading -> {
                         CircularProgressIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
-                    // Error on first load
-                    songs.loadState.refresh is LoadState.Error -> {
-                        val error = songs.loadState.refresh as LoadState.Error
-
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Something went wrong")
-                            Spacer(Modifier.height(8.dp))
-                            Button(onClick = { songs.retry() }) {
-                                Text("Retry")
-                            }
-                        }
-                    }
-
-                    // Empty state
-                    songs.itemCount == 0 -> {
+                    songs.loadState.refresh is LoadState.NotLoading && songs.itemCount == 0 -> {
                         Text(
-                            text = "No songs found",
+                            text = stringResource(R.string.search_for_a_song),
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
 
-                    // Content
                     else -> {
                         LazyColumn {
                             items(
@@ -121,7 +99,6 @@ fun SongListScreen(
                                 }
                             }
 
-                            // Pagination loading
                             if (songs.loadState.append is LoadState.Loading) {
                                 item {
                                     CircularProgressIndicator(
@@ -130,20 +107,6 @@ fun SongListScreen(
                                             .padding(16.dp)
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
-                                }
-                            }
-
-                            // Pagination error
-                            if (songs.loadState.append is LoadState.Error) {
-                                item {
-                                    Button(
-                                        onClick = { songs.retry() },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp)
-                                    ) {
-                                        Text("Retry")
-                                    }
                                 }
                             }
                         }

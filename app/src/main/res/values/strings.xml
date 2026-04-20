@@ -5,4 +5,5 @@
     <string name="search_placeholder">Search</string>
     <string name="now_playing">Now playing</string>
     <string name="view_album">View album</string>
+    <string name="search_for_a_song">Search for a song!</string>
 </resources>
