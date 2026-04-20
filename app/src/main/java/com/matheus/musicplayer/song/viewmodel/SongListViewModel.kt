@@ -9,16 +9,20 @@ import com.matheus.musicplayer.domain.usecase.GetRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SongListViewModel @Inject constructor(
     private val searchSongsUseCase: SearchSongsUseCase,
@@ -35,6 +39,7 @@ class SongListViewModel @Inject constructor(
     val songs: Flow<PagingData<Song>> =
         _searchQuery
             .debounce(500)
+            .distinctUntilChanged()
             .flatMapLatest { query ->
                 when {
                     query.isBlank() -> getRecentlyPlayedUseCase()
