@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = PlayerViewModel.Factory::class)
 class PlayerViewModel @AssistedInject constructor(
-    @ApplicationContext context: Context,
     @Assisted private val route: Route.Player,
+    private val playerManager: PlayerManager,
     private val getSongUseCase: GetSongUseCase
 ) : ViewModel() {
 
@@ -29,9 +29,6 @@ class PlayerViewModel @AssistedInject constructor(
     interface Factory {
         fun create(route: Route.Player): PlayerViewModel
     }
-
-    private val playerManager = PlayerManager(context)
-    private val player = playerManager.getPlayer()
 
     private val _uiState = MutableStateFlow(PlayerState())
     val uiState = _uiState.asStateFlow()
@@ -48,14 +45,14 @@ class PlayerViewModel @AssistedInject constructor(
 
     private fun observePlayer() {
 
-        player.addListener(object : Player.Listener {
+        playerManager.getPlayer().addListener(object : Player.Listener {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 _uiState.update { it.copy(isPlaying = isPlaying) }
             }
 
             override fun onPlaybackStateChanged(state: Int) {
-                val duration = player.duration.takeIf { it > 0 } ?: 0L
+                val duration = playerManager.getPlayer().duration.takeIf { it > 0 } ?: 0L
 
                 _uiState.update {
                     it.copy(
@@ -68,7 +65,7 @@ class PlayerViewModel @AssistedInject constructor(
         viewModelScope.launch {
             while (true) {
                 _uiState.update {
-                    it.copy(position = player.currentPosition)
+                    it.copy(position = playerManager.getPlayer().currentPosition)
                 }
                 delay(100)
             }
@@ -94,7 +91,7 @@ class PlayerViewModel @AssistedInject constructor(
         playerManager.seekTo(position)
     }
 
-    override fun onCleared() {
-        playerManager.release()
+    fun onStopPlayback() {
+        playerManager.reset()
     }
 }

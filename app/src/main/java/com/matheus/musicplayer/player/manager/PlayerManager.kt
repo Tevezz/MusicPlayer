@@ -11,19 +11,15 @@ class PlayerManager(context: Context) {
     private var currentUrl: String? = null
 
     fun play(url: String) {
-
         if (currentUrl == url) {
-
             if (player.playbackState == Player.STATE_ENDED) {
                 player.seekTo(0)
             }
-
             player.play()
             return
         }
 
         currentUrl = url
-
         val mediaItem = MediaItem.fromUri(url)
         player.setMediaItem(mediaItem)
         player.prepare()
@@ -40,7 +36,9 @@ class PlayerManager(context: Context) {
 
     fun getPlayer(): ExoPlayer = player
 
-    fun release() {
-        player.release()
+    fun reset() {
+        player.stop()
+        player.clearMediaItems()
+        currentUrl = null
     }
 }
