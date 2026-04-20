@@ -12,6 +12,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,6 +43,9 @@ fun SongListScreen(
     val songs = viewModel.songs.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
+    val isRefreshing = songs.loadState.refresh is LoadState.Loading
+    val pullToRefreshState = rememberPullToRefreshState()
+
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SongListEvent.NavToPlayer -> onNavigateToPlayer(event.trackId)
@@ -56,12 +61,14 @@ fun SongListScreen(
                 .padding(contentPadding)
                 .padding(horizontal = 20.dp)
         ) {
+
             Text(
                 text = stringResource(R.string.songs_title),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White,
                 modifier = Modifier.padding(vertical = 20.dp)
             )
+
             SongSearchBar(
                 searchQuery = searchQuery,
                 onSearchQueryChanged = {
@@ -71,48 +78,53 @@ fun SongListScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            PullToRefreshBox(
+                state = pullToRefreshState,
+                isRefreshing = isRefreshing,
+                onRefresh = { songs.refresh() },
+                modifier = Modifier.weight(1f)
+            ) {
 
-                when {
-                    songs.loadState.refresh is LoadState.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
 
-                    songs.loadState.refresh is LoadState.NotLoading && songs.itemCount == 0 -> {
-                        Text(
-                            text = stringResource(R.string.search_for_a_song),
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-
-                    else -> {
-                        LazyColumn {
-                            items(
-                                count = songs.itemCount,
-                                key = songs.itemKey { it.trackId }
-                            ) { index ->
-                                songs[index]?.let { song ->
-                                    SongListItem(song) {
-                                        viewModel.onAction(SongListAction.OnSongClick(it))
-                                    }
-                                }
-                            }
-
-                            if (songs.loadState.append is LoadState.Loading) {
-                                item {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp)
-                                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    if (songs.loadState.refresh is LoadState.NotLoading && songs.itemCount == 0) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillParentMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.search_for_a_song),
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        textAlign = TextAlign.Center
                                     )
-                                }
+                                )
                             }
+                        }
+                    }
+
+                    items(
+                        count = songs.itemCount,
+                        key = songs.itemKey { it.trackId }
+                    ) { index ->
+                        songs[index]?.let { song ->
+                            SongListItem(song) {
+                                viewModel.onAction(SongListAction.OnSongClick(it))
+                            }
+                        }
+                    }
+
+                    if (songs.loadState.append is LoadState.Loading) {
+                        item {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                                    .wrapContentWidth(Alignment.CenterHorizontally)
+                            )
                         }
                     }
                 }
