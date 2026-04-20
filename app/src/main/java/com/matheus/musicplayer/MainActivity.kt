@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
                         entry<Route.Player> { key ->
                             PlayerScreen(
                                 viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
+                                    key = key.trackId.toString(),
                                     creationCallback = { factory ->
                                         factory.create(key)
                                     }
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
                         entry<Route.Album> { key ->
                             AlbumScreen(
                                 viewModel = hiltViewModel<AlbumViewModel, AlbumViewModel.Factory>(
+                                    key = key.trackId.toString(),
                                     creationCallback = { factory ->
                                         factory.create(key)
                                     }
