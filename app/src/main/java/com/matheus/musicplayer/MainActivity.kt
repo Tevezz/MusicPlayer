@@ -9,8 +9,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.matheus.musicplayer.album.AlbumScreen
-import com.matheus.musicplayer.album.AlbumViewModel
+import com.matheus.musicplayer.album.ui.AlbumScreen
+import com.matheus.musicplayer.album.viewmodel.AlbumViewModel
 import com.matheus.musicplayer.player.ui.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 import com.matheus.musicplayer.route.Route

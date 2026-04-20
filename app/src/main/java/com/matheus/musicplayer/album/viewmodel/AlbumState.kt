@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.album
+package com.matheus.musicplayer.album.viewmodel
 
 import com.matheus.musicplayer.domain.model.Album
 

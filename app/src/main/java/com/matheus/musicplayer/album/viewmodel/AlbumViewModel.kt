@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.album
+package com.matheus.musicplayer.album.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

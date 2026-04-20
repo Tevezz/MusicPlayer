@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
-import com.matheus.musicplayer.album.AlbumBottomSheet
+import com.matheus.musicplayer.album.ui.AlbumBottomSheet
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.album
+package com.matheus.musicplayer.album.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.matheus.musicplayer.album.viewmodel.AlbumViewModel
 import com.matheus.musicplayer.song.ui.SongListItem
 
 @Composable
