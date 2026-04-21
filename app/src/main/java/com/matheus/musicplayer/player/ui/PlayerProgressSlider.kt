@@ -1,7 +1,6 @@
 package com.matheus.musicplayer.player.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,14 +31,14 @@ fun PlayerProgressSlider(
     modifier: Modifier = Modifier
 ) {
 
-    val interactionSource = remember { MutableInteractionSource() }
+    val safeDuration = duration.takeIf { it > 0 } ?: 1L
 
     Column(modifier = modifier) {
 
         Slider(
             value = position.toFloat(),
             onValueChange = { onSeek(it.toLong()) },
-            interactionSource = interactionSource,
+            valueRange = 0f..safeDuration.toFloat(),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(24.dp),
