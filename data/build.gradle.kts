@@ -57,6 +57,10 @@ dependencies {
     implementation(libs.room.paging)
     ksp(libs.room.compiler)
 
+    // Mockk & Assertions
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotest.assertions.core)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
