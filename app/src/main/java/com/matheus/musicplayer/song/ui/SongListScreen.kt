@@ -63,7 +63,9 @@ fun SongListScreen(
     val songs = viewModel.songs.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
-    var isSearching by remember { mutableStateOf(false) }
+    var isSearching by remember(searchQuery) {
+        mutableStateOf(searchQuery.isNotEmpty())
+    }
 
     val isRefreshing = songs.loadState.refresh is LoadState.Loading
     val pullToRefreshState = rememberPullToRefreshState()
