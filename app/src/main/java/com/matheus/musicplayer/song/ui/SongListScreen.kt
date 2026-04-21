@@ -179,7 +179,8 @@ fun SongListScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp)
-                                    .wrapContentWidth(Alignment.CenterHorizontally)
+                                    .wrapContentWidth(Alignment.CenterHorizontally),
+                                color = Color.White
                             )
                         }
                     }
