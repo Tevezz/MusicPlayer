@@ -167,7 +167,8 @@ fun SongListScreen(
                                 song = song,
                                 showMoreIcon = true,
                                 onClick = viewModel::onSongClick,
-                                onMoreClick = { songToShowAlbumSheet = it }
+                                onMoreClick = { songToShowAlbumSheet = it },
+                                modifier = Modifier.animateItem()
                             )
                         }
                     }

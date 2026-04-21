@@ -43,15 +43,18 @@ class AlbumViewModel @AssistedInject constructor(
 
     private fun getAlbum() = viewModelScope.launch {
         _state.update { it.copy(isLoading = true) }
-        val song = getSongUseCase(route.trackId).getOrThrow()
-        getAlbumUseCase(song.collectionId!!)
+        val song = getSongUseCase(route.trackId).getOrNull()
+        val collectionId = song?.collectionId
+        if (song == null || collectionId == null) {
+            _state.update { it.copy(isLoading = false, error = "Song not found") }
+            return@launch
+        }
+        getAlbumUseCase(collectionId)
             .onSuccess { album ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        album = album
-                    )
-                }
+                _state.update { it.copy(isLoading = false, album = album) }
+            }
+            .onError {
+                _state.update { it.copy(isLoading = false, error = "Failed to load album") }
             }
     }
 

@@ -48,7 +48,7 @@ class SongListViewModel @Inject constructor(
             }
             .cachedIn(viewModelScope)
 
-    fun onSearchChange(searchQuery: String) = viewModelScope.launch {
+    fun onSearchChange(searchQuery: String) {
         _searchQuery.value = searchQuery
     }
 

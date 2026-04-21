@@ -66,7 +66,9 @@ class PlayerViewModel @AssistedInject constructor(
         })
 
         while (true) {
-            _uiState.update { it.copy(position = controller.currentPosition) }
+            if (_uiState.value.isPlaying) {
+                _uiState.update { it.copy(position = controller.currentPosition) }
+            }
             delay(100)
         }
     }

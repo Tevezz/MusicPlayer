@@ -32,10 +32,11 @@ fun SongListItem(
     song: Song,
     showMoreIcon: Boolean,
     onClick: (Song) -> Unit,
-    onMoreClick: (Song) -> Unit
+    onMoreClick: (Song) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable(onClick = { onClick(song) }),

@@ -1,5 +1,10 @@
 package com.matheus.musicplayer.player.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -9,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -39,12 +43,18 @@ fun PlayerControls(
                 .size(72.dp)
                 .background(Color.White.copy(alpha = 0.2f), CircleShape)
         ) {
-            Icon(
-                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                contentDescription = if (isPlaying) "Pause" else "Play",
-                tint = Color.White,
-                modifier = Modifier.size(36.dp)
-            )
+            AnimatedContent(
+                targetState = isPlaying,
+                transitionSpec = { fadeIn(tween(150)) togetherWith fadeOut(tween(150)) },
+                label = "PlayPause"
+            ) { playing ->
+                Icon(
+                    imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = if (playing) "Pause" else "Play",
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.size(24.dp))
@@ -77,7 +87,11 @@ fun PlayerControls(
         ) {
             IconButton(
                 onClick = onRepeatClick,
-                modifier = if (isRepeating) Modifier.background(Color.White.copy(alpha = 0.2f), CircleShape) else Modifier
+                modifier = if (isRepeating) {
+                    Modifier.background(Color.White.copy(alpha = 0.2f), CircleShape)
+                } else {
+                    Modifier
+                }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_on_repeat),
@@ -89,4 +103,3 @@ fun PlayerControls(
         }
     }
 }
-

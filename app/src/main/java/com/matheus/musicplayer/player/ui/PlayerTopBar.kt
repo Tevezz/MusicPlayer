@@ -19,14 +19,15 @@ import androidx.compose.ui.unit.sp
 fun PlayerTopBar(
     title: String,
     onNavigateBack: () -> Unit,
-    onOptionsClick: () -> Unit
+    onOptionsClick: (() -> Unit)? = null
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp)
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 18.sp),
+                maxLines = 1
             )
         },
         navigationIcon = {
@@ -39,8 +40,10 @@ fun PlayerTopBar(
             }
         },
         actions = {
-            IconButton(onClick = onOptionsClick) {
-                Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White)
+            if (onOptionsClick != null) {
+                IconButton(onClick = onOptionsClick) {
+                    Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White)
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
