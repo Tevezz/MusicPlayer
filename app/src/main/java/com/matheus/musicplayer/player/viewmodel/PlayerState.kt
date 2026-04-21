@@ -6,5 +6,9 @@ data class PlayerState(
     val song: Song? = null,
     val isPlaying: Boolean = false,
     val position: Long = 0L,
-    val duration: Long = 0L
-)
+    val duration: Long = DEFAULT_DURATION
+) {
+    companion object {
+        const val DEFAULT_DURATION: Long = 30000L
+    }
+}

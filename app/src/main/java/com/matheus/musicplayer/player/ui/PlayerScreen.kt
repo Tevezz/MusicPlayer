@@ -1,5 +1,6 @@
 package com.matheus.musicplayer.player.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,9 +45,7 @@ fun PlayerScreen(
     var isShowAlbumBottomSheet by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
-        onDispose {
-            viewModel.onStopPlayback()
-        }
+        onDispose { viewModel.onStopPlayback() }
     }
 
     Scaffold(
@@ -55,30 +54,33 @@ fun PlayerScreen(
             PlayerTopBar(
                 title = stringResource(R.string.now_playing),
                 onNavigateBack = onNavigateBack,
-                onOptionsClick = {
-                    isShowAlbumBottomSheet = true
-                }
+                onOptionsClick = { isShowAlbumBottomSheet = true }
             )
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            AsyncImage(
-                model = artwork,
-                contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .size(264.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            )
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = artwork,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(264.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -102,7 +104,6 @@ fun PlayerScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Progress Slider
             PlayerProgressSlider(
                 position = state.position,
                 duration = state.duration,
@@ -130,4 +131,3 @@ fun PlayerScreen(
         }
     }
 }
-

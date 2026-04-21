@@ -1,6 +1,7 @@
 package com.matheus.musicplayer.player.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,24 +33,22 @@ fun PlayerProgressSlider(
     modifier: Modifier = Modifier
 ) {
 
-    val safeDuration = duration.takeIf { it > 0 } ?: 1L
-    val progress = (position.toFloat() / safeDuration.toFloat()).coerceIn(0f, 1f)
+    val interactionSource = remember { MutableInteractionSource() }
 
     Column(modifier = modifier) {
 
         Slider(
             value = position.toFloat(),
             onValueChange = { onSeek(it.toLong()) },
-            valueRange = 0f..safeDuration.toFloat(),
-
+            interactionSource = interactionSource,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(24.dp),
 
             colors = SliderDefaults.colors(
-                thumbColor = Color.Transparent,
-                activeTrackColor = Color.Transparent,
-                inactiveTrackColor = Color.Transparent
+                thumbColor = Color.White,
+                activeTrackColor = Color.White,
+                inactiveTrackColor = Color.White.copy(alpha = 0.25f),
             ),
             thumb = {
                 Box(
@@ -58,35 +57,18 @@ fun PlayerProgressSlider(
                         .background(Color.White, CircleShape)
                 )
             },
-            track = {
-                Box(
+            track = { sliderState ->
+                SliderDefaults.Track(
+                    sliderState = sliderState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(24.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(50))
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .background(Color.White.copy(alpha = 0.25f))
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(progress)
-                                .matchParentSize()
-                                .background(Color.White)
-                        )
-                    }
-                }
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(100)),
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = Color.White,
+                        inactiveTrackColor = Color.White.copy(alpha = 0.25f)
+                    )
+                )
             }
         )
 

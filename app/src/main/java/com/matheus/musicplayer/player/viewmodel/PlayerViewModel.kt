@@ -1,6 +1,5 @@
 package com.matheus.musicplayer.player.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -11,7 +10,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +50,8 @@ class PlayerViewModel @AssistedInject constructor(
             }
 
             override fun onPlaybackStateChanged(state: Int) {
-                val duration = playerManager.getPlayer().duration.takeIf { it > 0 } ?: 0L
+                val duration = playerManager.getPlayer().duration.takeIf { it > 0 }
+                    ?: PlayerState.DEFAULT_DURATION
 
                 _uiState.update {
                     it.copy(
