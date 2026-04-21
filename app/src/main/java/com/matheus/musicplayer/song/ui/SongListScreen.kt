@@ -1,14 +1,30 @@
 package com.matheus.musicplayer.song.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,13 +60,13 @@ fun SongListScreen(
     onNavigateToPlayer: (Long) -> Unit,
     onNavigateToAlbum: (Long) -> Unit
 ) {
-
     val songs = viewModel.songs.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
+    var isSearching by remember { mutableStateOf(false) }
+
     val isRefreshing = songs.loadState.refresh is LoadState.Loading
     val pullToRefreshState = rememberPullToRefreshState()
-
     var songToShowAlbumSheet by remember { mutableStateOf<Song?>(null) }
 
     ObserveAsEvents(viewModel.events) { event ->
@@ -63,26 +79,59 @@ fun SongListScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { contentPadding ->
-
         Column(
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(horizontal = 20.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.songs_title),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
 
-            Text(
-                text = stringResource(R.string.songs_title),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
-                modifier = Modifier.padding(vertical = 20.dp)
-            )
+                AnimatedContent(
+                    targetState = isSearching,
+                    transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) },
+                    label = "SearchIcon"
+                ) { searching ->
+                    if (!searching) {
+                        IconButton(onClick = { isSearching = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
+            }
 
-            SongSearchBar(
-                searchQuery = searchQuery,
-                onSearchQueryChanged = viewModel::onSearchChange,
-                onImeSearch = {},
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+            AnimatedVisibility(
+                visible = isSearching,
+                enter = fadeIn(tween(300)) + expandVertically(animationSpec = tween(300)),
+                exit = fadeOut(tween(300)) + shrinkVertically(animationSpec = tween(300))
+            ) {
+                SongSearchBar(
+                    searchQuery = searchQuery,
+                    onSearchQueryChanged = viewModel::onSearchChange,
+                    onImeSearch = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 16.dp)
+                )
+            }
+
+            if (!isSearching) {
+                Spacer(modifier = Modifier.size(16.dp))
+            }
 
             PullToRefreshBox(
                 state = pullToRefreshState,
@@ -90,16 +139,13 @@ fun SongListScreen(
                 onRefresh = { songs.refresh() },
                 modifier = Modifier.weight(1f)
             ) {
-
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-
                     if (songs.loadState.refresh is LoadState.NotLoading && songs.itemCount == 0) {
                         item {
                             Box(
-                                modifier = Modifier
-                                    .fillParentMaxSize(),
+                                modifier = Modifier.fillParentMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
