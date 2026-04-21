@@ -75,11 +75,14 @@ fun PlayerControls(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.End
         ) {
-            IconButton(onClick = onRepeatClick) {
+            IconButton(
+                onClick = onRepeatClick,
+                modifier = if (isRepeating) Modifier.background(Color.White.copy(alpha = 0.2f), CircleShape) else Modifier
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_on_repeat),
                     contentDescription = "Repeat",
-                    tint = if (isRepeating) Color.White else Color.White.copy(alpha = 0.4f),
+                    tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
             }
