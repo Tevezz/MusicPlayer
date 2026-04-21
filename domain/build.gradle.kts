@@ -16,6 +16,10 @@ dependencies {
     // Paging
     implementation(libs.androidx.paging.common)
 
+    // Mockk & Assertions
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotest.assertions.core)
+
     implementation(libs.javax.inject)
     testImplementation(libs.junit)
 }
