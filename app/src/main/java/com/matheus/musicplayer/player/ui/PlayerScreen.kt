@@ -29,7 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.album.ui.AlbumBottomSheet
+import com.matheus.musicplayer.player.viewmodel.PlayerEvent
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
+import com.matheus.musicplayer.util.ObserveAsEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +48,12 @@ fun PlayerScreen(
 
     DisposableEffect(Unit) {
         onDispose { viewModel.onStopPlayback() }
+    }
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is PlayerEvent.NavToAlbum -> onNavigateToAlbum(event.trackId)
+        }
     }
 
     Scaffold(
@@ -126,7 +134,7 @@ fun PlayerScreen(
             AlbumBottomSheet(
                 song = song,
                 onDismiss = { isShowAlbumBottomSheet = false },
-                onViewAlbumClick = { onNavigateToAlbum(song.trackId) } // TODO Needs to be an event
+                onViewAlbumClick = viewModel::onAlbumClick
             )
         }
     }

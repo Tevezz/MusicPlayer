@@ -3,6 +3,7 @@ package com.matheus.musicplayer.player.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
+import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetSongUseCase
 import com.matheus.musicplayer.player.manager.PlayerManager
 import com.matheus.musicplayer.route.Route
@@ -10,9 +11,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -27,6 +30,9 @@ class PlayerViewModel @AssistedInject constructor(
     interface Factory {
         fun create(route: Route.Player): PlayerViewModel
     }
+
+    private val _events = Channel<PlayerEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     private val _uiState = MutableStateFlow(PlayerState())
     val uiState = _uiState.asStateFlow()
@@ -92,5 +98,9 @@ class PlayerViewModel @AssistedInject constructor(
 
     fun onStopPlayback() {
         playerManager.reset()
+    }
+
+    fun onAlbumClick(song: Song) = viewModelScope.launch {
+        _events.send(PlayerEvent.NavToAlbum(song.trackId))
     }
 }
