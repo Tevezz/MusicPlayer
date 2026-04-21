@@ -16,6 +16,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +31,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.matheus.musicplayer.R
-import com.matheus.musicplayer.song.viewmodel.SongListAction
+import com.matheus.musicplayer.album.ui.AlbumBottomSheet
+import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.song.viewmodel.SongListEvent
 import com.matheus.musicplayer.song.viewmodel.SongListViewModel
 import com.matheus.musicplayer.util.ObserveAsEvents
@@ -37,7 +41,8 @@ import com.matheus.musicplayer.util.ObserveAsEvents
 @Composable
 fun SongListScreen(
     viewModel: SongListViewModel = hiltViewModel(),
-    onNavigateToPlayer: (Long) -> Unit
+    onNavigateToPlayer: (Long) -> Unit,
+    onNavigateToAlbum: (Long) -> Unit
 ) {
 
     val songs = viewModel.songs.collectAsLazyPagingItems()
@@ -46,9 +51,12 @@ fun SongListScreen(
     val isRefreshing = songs.loadState.refresh is LoadState.Loading
     val pullToRefreshState = rememberPullToRefreshState()
 
+    var songToShowAlbumSheet by remember { mutableStateOf<Song?>(null) }
+
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SongListEvent.NavToPlayer -> onNavigateToPlayer(event.trackId)
+            is SongListEvent.NavToAlbum -> onNavigateToAlbum(event.trackId)
         }
     }
 
@@ -71,9 +79,7 @@ fun SongListScreen(
 
             SongSearchBar(
                 searchQuery = searchQuery,
-                onSearchQueryChanged = {
-                    viewModel.onAction(SongListAction.OnSearchQueryChange(it))
-                },
+                onSearchQueryChanged = viewModel::onSearchChange,
                 onImeSearch = {},
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -111,9 +117,12 @@ fun SongListScreen(
                         key = songs.itemKey { it.trackId }
                     ) { index ->
                         songs[index]?.let { song ->
-                            SongListItem(song) {
-                                viewModel.onAction(SongListAction.OnSongClick(it))
-                            }
+                            SongListItem(
+                                song = song,
+                                showMoreIcon = true,
+                                onClick = viewModel::onSongClick,
+                                onMoreClick = { songToShowAlbumSheet = it }
+                            )
                         }
                     }
 
@@ -129,6 +138,14 @@ fun SongListScreen(
                     }
                 }
             }
+        }
+
+        songToShowAlbumSheet?.also { song ->
+            AlbumBottomSheet(
+                song = song,
+                onDismiss = { songToShowAlbumSheet = null },
+                onViewAlbumClick = viewModel::onAlbumClick
+            )
         }
     }
 }

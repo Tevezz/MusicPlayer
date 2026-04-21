@@ -48,20 +48,16 @@ class SongListViewModel @Inject constructor(
             }
             .cachedIn(viewModelScope)
 
-    fun onAction(action: SongListAction) {
-        when (action) {
-            is SongListAction.OnSearchQueryChange -> {
-                _searchQuery.value = action.searchQuery
-            }
-
-            is SongListAction.OnSongClick -> {
-                handleSongClick(action.song)
-            }
-        }
+    fun onSearchChange(searchQuery: String) = viewModelScope.launch {
+        _searchQuery.value = searchQuery
     }
 
-    private fun handleSongClick(song: Song) = viewModelScope.launch {
+    fun onSongClick(song: Song) = viewModelScope.launch {
         saveRecentlyPlayedUseCase(song)
         _events.send(SongListEvent.NavToPlayer(song.trackId))
+    }
+
+    fun onAlbumClick(song: Song) = viewModelScope.launch {
+        _events.send(SongListEvent.NavToAlbum(song.trackId))
     }
 }

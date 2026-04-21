@@ -36,9 +36,8 @@ class MainActivity : ComponentActivity() {
                         entry<Route.SongList> {
                             SongListScreen(
                                 viewModel = hiltViewModel(),
-                                onNavigateToPlayer = {
-                                    backStack.add(Route.Player(it))
-                                }
+                                onNavigateToPlayer = { backStack.add(Route.Player(it)) },
+                                onNavigateToAlbum = { backStack.add(Route.Album(it)) }
                             )
                         }
                         entry<Route.Player> { key ->
