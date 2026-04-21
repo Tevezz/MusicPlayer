@@ -1,44 +1,53 @@
 package com.matheus.musicplayer.player.manager
 
+import android.content.ComponentName
 import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.MoreExecutors
+import com.matheus.musicplayer.player.service.PlaybackService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerManager(context: Context) {
 
-    private val player = ExoPlayer.Builder(context).build()
+    private val _controllerFlow = MutableStateFlow<MediaController?>(null)
+    val controllerFlow: StateFlow<MediaController?> = _controllerFlow.asStateFlow()
+
     private var currentUrl: String? = null
 
+    init {
+        val token = SessionToken(context, ComponentName(context, PlaybackService::class.java))
+        val future = MediaController.Builder(context, token).buildAsync()
+        future.addListener(
+            { _controllerFlow.value = future.get() },
+            MoreExecutors.directExecutor()
+        )
+    }
+
     fun play(url: String) {
+        val ctrl = _controllerFlow.value ?: return
         if (currentUrl == url) {
-            if (player.playbackState == Player.STATE_ENDED) {
-                player.seekTo(0)
-            }
-            player.play()
+            if (ctrl.playbackState == Player.STATE_ENDED) ctrl.seekTo(0)
+            ctrl.play()
             return
         }
-
         currentUrl = url
-        val mediaItem = MediaItem.fromUri(url)
-        player.setMediaItem(mediaItem)
-        player.prepare()
-        player.play()
+        ctrl.setMediaItem(MediaItem.fromUri(url))
+        ctrl.prepare()
+        ctrl.play()
     }
 
     fun pause() {
-        player.pause()
+        _controllerFlow.value?.pause()
     }
 
     fun seekTo(position: Long) {
-        player.seekTo(position)
+        _controllerFlow.value?.seekTo(position)
     }
 
-    fun getPlayer(): ExoPlayer = player
-
-    fun reset() {
-        player.stop()
-        player.clearMediaItems()
-        currentUrl = null
-    }
+    fun getPlayer(): Player? = _controllerFlow.value
 }

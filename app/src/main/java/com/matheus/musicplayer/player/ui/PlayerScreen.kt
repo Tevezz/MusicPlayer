@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,10 +44,6 @@ fun PlayerScreen(
 
     val artwork = song.artworkUrl100?.replace("100x100", "600x600")
     var isShowAlbumBottomSheet by remember { mutableStateOf(false) }
-
-    DisposableEffect(Unit) {
-        onDispose { viewModel.onStopPlayback() }
-    }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {

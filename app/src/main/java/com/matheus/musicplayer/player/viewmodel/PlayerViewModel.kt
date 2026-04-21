@@ -15,6 +15,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,42 +47,33 @@ class PlayerViewModel @AssistedInject constructor(
     private fun initialize() = viewModelScope.launch {
         val song = getSongUseCase(route.trackId).getOrNull()
         _uiState.update { it.copy(song = song) }
+        play()
     }
 
-    private fun observePlayer() {
+    private fun observePlayer() = viewModelScope.launch {
+        val controller = playerManager.controllerFlow.filterNotNull().first()
 
-        playerManager.getPlayer().addListener(object : Player.Listener {
-
+        controller.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 _uiState.update { it.copy(isPlaying = isPlaying) }
             }
 
             override fun onPlaybackStateChanged(state: Int) {
-                val duration = playerManager.getPlayer().duration.takeIf { it > 0 }
+                val duration = controller.duration.takeIf { it > 0 }
                     ?: PlayerState.DEFAULT_DURATION
-
-                _uiState.update {
-                    it.copy(
-                        duration = duration
-                    )
-                }
+                _uiState.update { it.copy(duration = duration) }
             }
         })
 
-        viewModelScope.launch {
-            while (true) {
-                _uiState.update {
-                    it.copy(position = playerManager.getPlayer().currentPosition)
-                }
-                delay(100)
-            }
+        while (true) {
+            _uiState.update { it.copy(position = controller.currentPosition) }
+            delay(100)
         }
     }
 
     fun play() {
         val song = _uiState.value.song ?: return
         val url = song.previewUrl ?: return
-
         playerManager.play(url)
     }
 
@@ -94,10 +87,6 @@ class PlayerViewModel @AssistedInject constructor(
 
     fun seekTo(position: Long) {
         playerManager.seekTo(position)
-    }
-
-    fun onStopPlayback() {
-        playerManager.reset()
     }
 
     fun onAlbumClick(song: Song) = viewModelScope.launch {
