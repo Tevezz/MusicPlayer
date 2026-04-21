@@ -22,8 +22,10 @@ internal class SongRepositoryImpl @Inject constructor(
 
     override fun searchSongs(searchQuery: String): Flow<PagingData<Song>> {
         return Pager(
-            config = PagingConfig(
-                pageSize = 20,
+            config = PagingConfig( // TODO Move to paging source as a factory or constants at least
+                pageSize = 40,
+                initialLoadSize = 40,
+                prefetchDistance = 5,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -35,7 +37,7 @@ internal class SongRepositoryImpl @Inject constructor(
     override fun getRecentlyPlayed(): Flow<PagingData<Song>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
+                pageSize = 40,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {

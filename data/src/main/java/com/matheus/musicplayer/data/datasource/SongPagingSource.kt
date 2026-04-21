@@ -15,6 +15,8 @@ internal class SongPagingSource(
             val offset = params.key ?: 0
             val limit = params.loadSize
 
+            println("REQUEST → offset=$offset, limit=$limit")
+
             val response = api.searchSongs(
                 term = query,
                 limit = limit,
@@ -22,11 +24,18 @@ internal class SongPagingSource(
             )
 
             val songs = response.results.toSongList()
+            val prevKey = if (offset == 0) null else offset - limit
+            // If the API returns fewer results than the limit, we've reached the end
+            val nextKey = if (songs.isEmpty() || songs.size < limit) {
+                null
+            } else {
+                offset + limit
+            }
 
             LoadResult.Page(
                 data = songs,
-                prevKey = if (offset == 0) null else offset - limit,
-                nextKey = if (songs.isEmpty()) null else offset + limit
+                prevKey = prevKey,
+                nextKey = nextKey
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
@@ -34,9 +43,9 @@ internal class SongPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, Song>): Int? {
-        return state.anchorPosition?.let { anchor ->
-            state.closestPageToPosition(anchor)?.prevKey?.plus(state.config.pageSize)
-                ?: state.closestPageToPosition(anchor)?.nextKey?.minus(state.config.pageSize)
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(state.config.pageSize)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(state.config.pageSize)
         }
     }
 }
