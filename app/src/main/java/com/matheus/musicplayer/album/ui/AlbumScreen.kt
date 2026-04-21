@@ -23,16 +23,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.matheus.musicplayer.album.viewmodel.AlbumEvent
 import com.matheus.musicplayer.album.viewmodel.AlbumViewModel
 import com.matheus.musicplayer.song.ui.SongListItem
+import com.matheus.musicplayer.util.ObserveAsEvents
 
 @Composable
 fun AlbumScreen(
     viewModel: AlbumViewModel,
+    onNavigateToPlayer: (Long) -> Unit,
     onNavigateBack: () -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is AlbumEvent.NavToPlayer -> onNavigateToPlayer(event.trackId)
+        }
+    }
 
     if (state.isLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -100,7 +109,7 @@ fun AlbumScreen(
                         SongListItem(
                             song = song,
                             showMoreIcon = false,
-                            onClick = {}, // TODO
+                            onClick = viewModel::onSongClicked,
                             onMoreClick = {}
                         )
                     }

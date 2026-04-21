@@ -60,6 +60,7 @@ class MainActivity : ComponentActivity() {
                                         factory.create(key)
                                     }
                                 ),
+                                onNavigateToPlayer = { backStack.add(Route.Player(it)) },
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }
