@@ -1,7 +1,5 @@
-package com.matheus.musicplayer.data
+package com.matheus.musicplayer.data.mapper
 
-import com.matheus.musicplayer.data.mapper.toSong
-import com.matheus.musicplayer.data.mapper.toSongList
 import com.matheus.musicplayer.data.model.remote.SongResponseDto
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking

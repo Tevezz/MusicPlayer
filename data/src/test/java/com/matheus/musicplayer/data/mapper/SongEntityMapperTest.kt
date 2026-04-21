@@ -1,8 +1,5 @@
-package com.matheus.musicplayer.data
+package com.matheus.musicplayer.data.mapper
 
-import com.matheus.musicplayer.data.mapper.toEntity
-import com.matheus.musicplayer.data.mapper.toSong
-import com.matheus.musicplayer.data.mapper.toSongList
 import com.matheus.musicplayer.data.model.local.SongEntity
 import com.matheus.musicplayer.domain.model.Song
 import io.kotest.matchers.shouldBe

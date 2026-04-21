@@ -1,7 +1,5 @@
-package com.matheus.musicplayer.data
+package com.matheus.musicplayer.data.mapper
 
-import com.matheus.musicplayer.data.mapper.toAlbum
-import com.matheus.musicplayer.data.mapper.toSong
 import com.matheus.musicplayer.data.model.remote.LookupItemResponseDto
 import com.matheus.musicplayer.data.model.remote.LookupResponseType
 import io.kotest.matchers.shouldBe
