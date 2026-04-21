@@ -97,9 +97,12 @@ fun AlbumScreen(
                         .verticalScroll(rememberScrollState())
                 ) {
                     for (song in album.songs) {
-                        SongListItem(song = song) {
-                            // TODO
-                        }
+                        SongListItem(
+                            song = song,
+                            showMoreIcon = false,
+                            onClick = {}, // TODO
+                            onMoreClick = {}
+                        )
                     }
                 }
 
