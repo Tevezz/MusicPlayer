@@ -24,6 +24,7 @@ import com.matheus.musicplayer.R
 @Composable
 fun PlayerControls(
     isPlaying: Boolean,
+    isRepeating: Boolean,
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
     onPreviousClick: () -> Unit,
@@ -78,7 +79,7 @@ fun PlayerControls(
                 Icon(
                     painter = painterResource(R.drawable.ic_play_on_repeat),
                     contentDescription = "Repeat",
-                    tint = Color.White,
+                    tint = if (isRepeating) Color.White else Color.White.copy(alpha = 0.4f),
                     modifier = Modifier.size(24.dp)
                 )
             }

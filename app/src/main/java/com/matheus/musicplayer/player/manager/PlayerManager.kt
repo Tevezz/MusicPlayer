@@ -36,6 +36,7 @@ class PlayerManager(context: Context) {
             return
         }
         currentUrl = url
+        ctrl.repeatMode = Player.REPEAT_MODE_OFF
         ctrl.setMediaItem(MediaItem.fromUri(url))
         ctrl.prepare()
         ctrl.play()
@@ -49,5 +50,8 @@ class PlayerManager(context: Context) {
         _controllerFlow.value?.seekTo(position)
     }
 
-    fun getPlayer(): Player? = _controllerFlow.value
+    fun setRepeatMode(enabled: Boolean) {
+        _controllerFlow.value?.repeatMode =
+            if (enabled) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+    }
 }

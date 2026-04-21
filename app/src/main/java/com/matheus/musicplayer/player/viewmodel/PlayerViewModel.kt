@@ -89,6 +89,12 @@ class PlayerViewModel @AssistedInject constructor(
         playerManager.seekTo(position)
     }
 
+    fun onRepeatClick() {
+        val isRepeating = !_uiState.value.isRepeating
+        _uiState.update { it.copy(isRepeating = isRepeating) }
+        playerManager.setRepeatMode(isRepeating)
+    }
+
     fun onAlbumClick(song: Song) = viewModelScope.launch {
         _events.send(PlayerEvent.NavToAlbum(song.trackId))
     }

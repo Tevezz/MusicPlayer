@@ -5,6 +5,7 @@ import com.matheus.musicplayer.domain.model.Song
 data class PlayerState(
     val song: Song? = null,
     val isPlaying: Boolean = false,
+    val isRepeating: Boolean = false,
     val position: Long = 0L,
     val duration: Long = DEFAULT_DURATION
 ) {
