@@ -24,8 +24,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(onNavigateToMain: () -> Unit) {
     val alpha = remember { Animatable(0f) }
+    val sizeDp = remember { Animatable(90f) }
 
     LaunchedEffect(Unit) {
+        sizeDp.animateTo(
+            targetValue = 200f,
+            animationSpec = tween(durationMillis = 1200)
+        )
         alpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1200)
@@ -49,10 +54,11 @@ fun SplashScreen(onNavigateToMain: () -> Unit) {
             contentScale = ContentScale.FillBounds
         )
         Image(
+//            painter = painterResource(R.drawable.ic_splash_screen),
             painter = painterResource(R.drawable.ic_splash_screen),
             contentDescription = stringResource(R.string.app_name),
             modifier = Modifier
-                .size(150.dp)
+                .size(sizeDp.value.dp)
                 .alpha(alpha.value)
         )
     }
