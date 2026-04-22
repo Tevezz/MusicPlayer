@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.matheus.musicplayer.R
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.ui.theme.SongArtist
 
@@ -79,7 +81,7 @@ fun SongListItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = stringResource(R.string.more_options),
                     tint = SongArtist
                 )
             }

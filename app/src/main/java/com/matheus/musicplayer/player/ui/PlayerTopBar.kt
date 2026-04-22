@@ -12,7 +12,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.matheus.musicplayer.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +44,11 @@ fun PlayerTopBar(
         actions = {
             if (onOptionsClick != null) {
                 IconButton(onClick = onOptionsClick) {
-                    Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.White)
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = stringResource(R.string.more_options),
+                        tint = Color.White
+                    )
                 }
             }
         },
