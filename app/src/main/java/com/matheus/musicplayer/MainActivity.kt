@@ -15,6 +15,7 @@ import com.matheus.musicplayer.player.ui.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 import com.matheus.musicplayer.route.Route
 import com.matheus.musicplayer.song.ui.SongListScreen
+import com.matheus.musicplayer.splash.ui.SplashScreen
 import com.matheus.musicplayer.ui.theme.MusicPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,12 +28,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             MusicPlayerTheme {
 
-                val backStack = rememberNavBackStack(Route.SongList)
+                val backStack = rememberNavBackStack(Route.Splash)
 
                 NavDisplay(
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() ?: finish() },
                     entryProvider = entryProvider {
+                        entry<Route.Splash> {
+                            SplashScreen(
+                                onNavigateToMain = {
+                                    backStack.clear()
+                                    backStack.add(Route.SongList)
+                                }
+                            )
+                        }
                         entry<Route.SongList> {
                             SongListScreen(
                                 viewModel = hiltViewModel(),
