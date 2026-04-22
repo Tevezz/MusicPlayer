@@ -3,8 +3,10 @@ package com.matheus.musicplayer.domain
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.repository.SongRepository
 import com.matheus.musicplayer.domain.usecase.GetSongPlayedAfterUseCase
-import io.kotest.assertions.throwables.shouldThrow
+import com.matheus.musicplayer.domain.util.Response
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -27,8 +29,9 @@ internal class GetSongPlayedAfterUseCaseTest {
         val mockSong: Song = mockk()
         val trackId = 1111L
         coEvery { repository.getSongPlayedAfter(trackId) } returns mockSong
-        val result = getSongPlayedAfterUseCase(trackId)
-        result shouldBe mockSong
+        val response = getSongPlayedAfterUseCase(trackId)
+        response.shouldBeInstanceOf<Response.Success<Song>>()
+        response.data shouldBe mockSong
         coVerify(exactly = 1) { repository.getSongPlayedAfter(trackId) }
     }
 
@@ -36,8 +39,9 @@ internal class GetSongPlayedAfterUseCaseTest {
     fun `Get Song Played After Use Case - Returns Null When No Newer Song Exists`() = runBlocking {
         val trackId = 1111L
         coEvery { repository.getSongPlayedAfter(trackId) } returns null
-        val result = getSongPlayedAfterUseCase(trackId)
-        result shouldBe null
+        val response = getSongPlayedAfterUseCase(trackId)
+        response.shouldBeInstanceOf<Response.Error>()
+        response.exception.message shouldBe "No song was found to play after the current track."
         coVerify(exactly = 1) { repository.getSongPlayedAfter(trackId) }
     }
 
@@ -46,8 +50,9 @@ internal class GetSongPlayedAfterUseCaseTest {
         val trackId = 1111L
         val exception = Exception("Error!")
         coEvery { repository.getSongPlayedAfter(trackId) } throws exception
-        val thrown = shouldThrow<Exception> { getSongPlayedAfterUseCase(trackId) }
-        thrown.message shouldBe exception.message
+        val response = getSongPlayedAfterUseCase(trackId)
+        response.shouldBeInstanceOf<Response.Error>()
+        response.exception shouldNotBe null
         coVerify(exactly = 1) { repository.getSongPlayedAfter(trackId) }
     }
 }

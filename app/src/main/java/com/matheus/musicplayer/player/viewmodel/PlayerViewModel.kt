@@ -67,7 +67,7 @@ class PlayerViewModel @AssistedInject constructor(
             val older = async { getSongPlayedBeforeUseCase(trackId) }
             val newer = async { getSongPlayedAfterUseCase(trackId) }
             olderSongId = older.await().resultOrNull()?.trackId
-            newerSongId = newer.await()?.trackId
+            newerSongId = newer.await().resultOrNull()?.trackId
         }
         _uiState.update {
             it.copy(

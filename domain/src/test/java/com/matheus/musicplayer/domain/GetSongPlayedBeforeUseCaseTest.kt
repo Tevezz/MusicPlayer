@@ -41,7 +41,7 @@ internal class GetSongPlayedBeforeUseCaseTest {
         coEvery { repository.getSongPlayedBefore(trackId) } returns null
         val response = getSongPlayedBeforeUseCase(trackId)
         response.shouldBeInstanceOf<Response.Error>()
-        response.exception shouldNotBe null
+        response.exception.message shouldBe "No song was found played before the current track."
         coVerify(exactly = 1) { repository.getSongPlayedBefore(trackId) }
     }
 
