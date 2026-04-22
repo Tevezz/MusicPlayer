@@ -3,9 +3,9 @@ package com.matheus.musicplayer.domain
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.repository.SongRepository
 import com.matheus.musicplayer.domain.usecase.GetSongUseCase
-import io.kotest.matchers.result.shouldBeFailure
-import io.kotest.matchers.result.shouldBeSuccess
+import com.matheus.musicplayer.domain.util.Response
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -28,9 +28,9 @@ internal class GetSongUseCaseTest {
         val mockSong: Song = mockk()
         val trackId = 1111L
         coEvery { repository.getSong(trackId) } returns mockSong
-        val result = getSongUseCase(trackId)
-        result.shouldBeSuccess()
-        result.getOrNull() shouldBe mockSong
+        val response = getSongUseCase(trackId)
+        response.shouldBeInstanceOf<Response.Success<Song>>()
+        response.data shouldBe mockSong
         coVerify(exactly = 1) { repository.getSong(trackId) }
     }
 
@@ -39,9 +39,9 @@ internal class GetSongUseCaseTest {
         val trackId = 1111L
         val exception = Exception("Error!")
         coEvery { repository.getSong(trackId) } throws exception
-        val result = getSongUseCase(trackId)
-        result.shouldBeFailure()
-        result.exceptionOrNull() shouldBe exception
+        val response = getSongUseCase(trackId)
+        response.shouldBeInstanceOf<Response.Error>()
+        response.exception shouldBe exception
         coVerify(exactly = 1) { repository.getSong(trackId) }
     }
 }

@@ -45,7 +45,7 @@ class AlbumViewModel @AssistedInject constructor(
     private fun getAlbum() = viewModelScope.launch {
         _state.update { it.copy(isLoading = true) }
 
-        val song = getSongUseCase(route.trackId).getOrNull()
+        val song = getSongUseCase(route.trackId).resultOrNull()
         val collectionId = song?.collectionId
 
         // Safeguard, but should not happen.

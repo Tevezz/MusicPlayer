@@ -54,7 +54,7 @@ class PlayerViewModel @AssistedInject constructor(
     }
 
     private fun loadSong(trackId: Long) = viewModelScope.launch {
-        val song = getSongUseCase(trackId).getOrNull()
+        val song = getSongUseCase(trackId).resultOrNull()
         _uiState.update {
             it.copy(
                 song = song,
