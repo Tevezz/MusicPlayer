@@ -115,4 +115,52 @@ internal class SongRepositoryTest {
         val flow = repository.getRecentlyPlayed()
         flow shouldNotBe null
     }
+
+    @Test
+    fun `Get Song Played Before - Maps Entity To Song`() = runBlocking {
+        coEvery { songDao.getSongPlayedBefore(1L) } returns songEntity
+        val result = repository.getSongPlayedBefore(1L)
+        result shouldNotBe null
+        result!!.trackId shouldBe songEntity.trackId
+        result.trackName shouldBe songEntity.trackName
+        result.artistName shouldBe songEntity.artistName
+        result.artworkUrl100 shouldBe songEntity.artworkUrl
+        result.previewUrl shouldBe songEntity.previewUrl
+        result.collectionId shouldBe songEntity.collectionId
+        result.collectionName shouldBe songEntity.collectionName
+        result.trackTimeMillis shouldBe songEntity.trackTimeMillis
+        coVerify(exactly = 1) { songDao.getSongPlayedBefore(1L) }
+    }
+
+    @Test
+    fun `Get Song Played Before - Returns Null When No Song Found`() = runBlocking {
+        coEvery { songDao.getSongPlayedBefore(1L) } returns null
+        val result = repository.getSongPlayedBefore(1L)
+        result shouldBe null
+        coVerify(exactly = 1) { songDao.getSongPlayedBefore(1L) }
+    }
+
+    @Test
+    fun `Get Song Played After - Maps Entity To Song`() = runBlocking {
+        coEvery { songDao.getSongPlayedAfter(1L) } returns songEntity
+        val result = repository.getSongPlayedAfter(1L)
+        result shouldNotBe null
+        result!!.trackId shouldBe songEntity.trackId
+        result.trackName shouldBe songEntity.trackName
+        result.artistName shouldBe songEntity.artistName
+        result.artworkUrl100 shouldBe songEntity.artworkUrl
+        result.previewUrl shouldBe songEntity.previewUrl
+        result.collectionId shouldBe songEntity.collectionId
+        result.collectionName shouldBe songEntity.collectionName
+        result.trackTimeMillis shouldBe songEntity.trackTimeMillis
+        coVerify(exactly = 1) { songDao.getSongPlayedAfter(1L) }
+    }
+
+    @Test
+    fun `Get Song Played After - Returns Null When No Song Found`() = runBlocking {
+        coEvery { songDao.getSongPlayedAfter(1L) } returns null
+        val result = repository.getSongPlayedAfter(1L)
+        result shouldBe null
+        coVerify(exactly = 1) { songDao.getSongPlayedAfter(1L) }
+    }
 }

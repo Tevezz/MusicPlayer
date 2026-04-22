@@ -119,10 +119,12 @@ fun PlayerScreen(
             PlayerControls(
                 isPlaying = state.isPlaying,
                 isRepeating = state.isRepeating,
-                onPlayPauseClick = { viewModel.onPlayPause() },
-                onNextClick = {},
-                onPreviousClick = {},
-                onRepeatClick = { viewModel.onRepeatClick() }
+                isNextEnabled = state.canGoNext,
+                isPreviousEnabled = state.canGoPrevious,
+                onPlayPauseClick = viewModel::onPlayPause,
+                onNextClick = viewModel::onNextClick,
+                onPreviousClick = viewModel::onPreviousClick,
+                onRepeatClick = viewModel::onRepeatClick
             )
         }
 

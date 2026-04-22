@@ -56,4 +56,12 @@ internal class SongRepositoryImpl @Inject constructor(
     override suspend fun getSong(trackId: Long): Song {
         return songDao.getSong(trackId).toSong()
     }
+
+    override suspend fun getSongPlayedBefore(currentTrackId: Long): Song? {
+        return songDao.getSongPlayedBefore(currentTrackId)?.toSong()
+    }
+
+    override suspend fun getSongPlayedAfter(currentTrackId: Long): Song? {
+        return songDao.getSongPlayedAfter(currentTrackId)?.toSong()
+    }
 }

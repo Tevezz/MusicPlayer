@@ -29,6 +29,8 @@ import com.matheus.musicplayer.R
 fun PlayerControls(
     isPlaying: Boolean,
     isRepeating: Boolean,
+    isNextEnabled: Boolean,
+    isPreviousEnabled: Boolean,
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
     onPreviousClick: () -> Unit,
@@ -59,24 +61,30 @@ fun PlayerControls(
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        IconButton(onClick = onPreviousClick) {
+        IconButton(
+            onClick = onPreviousClick,
+            enabled = isPreviousEnabled,
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward_bar),
                 contentDescription = "Previous",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
+                tint = if (isPreviousEnabled) Color.White else Color.White.copy(alpha = 0.35f),
+                modifier = Modifier.size(24.dp)
             )
         }
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        IconButton(onClick = onNextClick) {
+        IconButton(
+            onClick = onNextClick,
+            enabled = isNextEnabled,
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward_bar),
                 contentDescription = "Next",
-                tint = Color.White,
+                tint = if (isNextEnabled) Color.White else Color.White.copy(alpha = 0.35f),
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(24.dp)
                     .rotate(180f)
             )
         }

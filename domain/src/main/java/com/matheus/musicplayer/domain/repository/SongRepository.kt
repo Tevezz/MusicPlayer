@@ -10,4 +10,6 @@ interface SongRepository {
 
     suspend fun saveRecentlyPlayed(song: Song)
     suspend fun getSong(trackId: Long): Song
+    suspend fun getSongPlayedBefore(currentTrackId: Long): Song?
+    suspend fun getSongPlayedAfter(currentTrackId: Long): Song?
 }

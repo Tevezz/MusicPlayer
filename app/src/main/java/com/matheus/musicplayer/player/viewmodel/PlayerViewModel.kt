@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.matheus.musicplayer.domain.model.Song
+import com.matheus.musicplayer.domain.usecase.GetSongPlayedAfterUseCase
+import com.matheus.musicplayer.domain.usecase.GetSongPlayedBeforeUseCase
 import com.matheus.musicplayer.domain.usecase.GetSongUseCase
 import com.matheus.musicplayer.player.manager.PlayerManager
 import com.matheus.musicplayer.route.Route
@@ -11,7 +13,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +29,9 @@ import kotlinx.coroutines.launch
 class PlayerViewModel @AssistedInject constructor(
     @Assisted private val route: Route.Player,
     private val playerManager: PlayerManager,
-    private val getSongUseCase: GetSongUseCase
+    private val getSongUseCase: GetSongUseCase,
+    private val getSongPlayedBeforeUseCase: GetSongPlayedBeforeUseCase,
+    private val getSongPlayedAfterUseCase: GetSongPlayedAfterUseCase
 ) : ViewModel() {
 
     @AssistedFactory
@@ -39,15 +45,36 @@ class PlayerViewModel @AssistedInject constructor(
     private val _uiState = MutableStateFlow(PlayerState())
     val uiState = _uiState.asStateFlow()
 
+    private var olderSongId: Long? = null
+    private var newerSongId: Long? = null
+
     init {
-        initialize()
+        loadSong(route.trackId)
         observePlayer()
     }
 
-    private fun initialize() = viewModelScope.launch {
-        val song = getSongUseCase(route.trackId).getOrNull()
-        _uiState.update { it.copy(song = song) }
+    private fun loadSong(trackId: Long) = viewModelScope.launch {
+        val song = getSongUseCase(trackId).getOrNull()
+        _uiState.update {
+            it.copy(
+                song = song,
+                position = 0L,
+                duration = PlayerState.DEFAULT_DURATION
+            )
+        }
         play()
+        coroutineScope {
+            val older = async { getSongPlayedBeforeUseCase(trackId) }
+            val newer = async { getSongPlayedAfterUseCase(trackId) }
+            olderSongId = older.await()?.trackId
+            newerSongId = newer.await()?.trackId
+        }
+        _uiState.update {
+            it.copy(
+                canGoNext = olderSongId != null,
+                canGoPrevious = newerSongId != null
+            )
+        }
     }
 
     private fun observePlayer() = viewModelScope.launch {
@@ -95,6 +122,16 @@ class PlayerViewModel @AssistedInject constructor(
         val isRepeating = !_uiState.value.isRepeating
         _uiState.update { it.copy(isRepeating = isRepeating) }
         playerManager.setRepeatMode(isRepeating)
+    }
+
+    fun onNextClick() {
+        val id = olderSongId ?: return
+        loadSong(id)
+    }
+
+    fun onPreviousClick() {
+        val id = newerSongId ?: return
+        loadSong(id)
     }
 
     fun onAlbumClick(song: Song) = viewModelScope.launch {

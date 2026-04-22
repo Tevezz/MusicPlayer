@@ -7,7 +7,9 @@ data class PlayerState(
     val isPlaying: Boolean = false,
     val isRepeating: Boolean = false,
     val position: Long = 0L,
-    val duration: Long = DEFAULT_DURATION
+    val duration: Long = DEFAULT_DURATION,
+    val canGoNext: Boolean = false,
+    val canGoPrevious: Boolean = false
 ) {
     companion object {
         const val DEFAULT_DURATION: Long = 30000L
