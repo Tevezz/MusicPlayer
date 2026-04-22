@@ -3,10 +3,10 @@ package com.matheus.musicplayer.domain
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.repository.SongRepository
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
-import io.kotest.assertions.throwables.shouldThrow
+import com.matheus.musicplayer.domain.util.Response
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
-import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -26,8 +26,10 @@ internal class SaveRecentlyPlayedUseCaseTest {
     @Test
     fun `Save Recently Played Use Case - Success`() = runBlocking {
         val mockSong: Song = mockk()
-        coJustRun { repository.saveRecentlyPlayed(mockSong) }
-        saveRecentlyPlayedUseCase(mockSong)
+        coEvery { repository.saveRecentlyPlayed(mockSong) } returns Unit
+        val response = saveRecentlyPlayedUseCase(mockSong)
+        response.shouldBeInstanceOf<Response.Success<Unit>>()
+        response.data shouldBe Unit
         coVerify(exactly = 1) { repository.saveRecentlyPlayed(mockSong) }
     }
 
@@ -36,8 +38,9 @@ internal class SaveRecentlyPlayedUseCaseTest {
         val mockSong: Song = mockk()
         val exception = Exception("Error!")
         coEvery { repository.saveRecentlyPlayed(mockSong) } throws exception
-        val thrown = shouldThrow<Exception> { saveRecentlyPlayedUseCase(mockSong) }
-        thrown.message shouldBe exception.message
+        val response = saveRecentlyPlayedUseCase(mockSong)
+        response.shouldBeInstanceOf<Response.Error>()
+        response.exception shouldBe exception
         coVerify(exactly = 1) { repository.saveRecentlyPlayed(mockSong) }
     }
 }

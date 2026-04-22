@@ -54,7 +54,9 @@ class SongListViewModel @Inject constructor(
 
     fun onSongClick(song: Song) = viewModelScope.launch {
         saveRecentlyPlayedUseCase(song)
-        _events.send(SongListEvent.NavToPlayer(song.trackId))
+            .onSuspendSuccess {
+                _events.send(SongListEvent.NavToPlayer(song.trackId))
+            }
     }
 
     fun onAlbumClick(song: Song) = viewModelScope.launch {
