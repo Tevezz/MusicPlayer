@@ -1,4 +1,4 @@
-package com.matheus.musicplayer
+package com.matheus.musicplayer.main
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

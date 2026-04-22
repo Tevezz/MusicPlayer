@@ -1,4 +1,4 @@
-package com.matheus.musicplayer
+package com.matheus.musicplayer.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +15,7 @@ import com.matheus.musicplayer.player.ui.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 import com.matheus.musicplayer.route.Route
 import com.matheus.musicplayer.song.ui.SongListScreen
-import com.matheus.musicplayer.splash.ui.SplashScreen
+import com.matheus.musicplayer.splash.SplashScreen
 import com.matheus.musicplayer.ui.theme.MusicPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,6 +34,8 @@ class MainActivity : ComponentActivity() {
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() ?: finish() },
                     entryProvider = entryProvider {
+
+                        // Splash Screen
                         entry<Route.Splash> {
                             SplashScreen(
                                 onNavigateToMain = {
@@ -42,6 +44,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
+                        // Song List Screen
                         entry<Route.SongList> {
                             SongListScreen(
                                 viewModel = hiltViewModel(),
@@ -55,6 +59,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
+                        // Player Screen
                         entry<Route.Player> { key ->
                             PlayerScreen(
                                 viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
@@ -70,6 +76,8 @@ class MainActivity : ComponentActivity() {
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }
+
+                        // Album Screen
                         entry<Route.Album> { key ->
                             AlbumScreen(
                                 viewModel = hiltViewModel<AlbumViewModel, AlbumViewModel.Factory>(
