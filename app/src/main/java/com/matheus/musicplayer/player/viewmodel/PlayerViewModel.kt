@@ -65,7 +65,8 @@ class PlayerViewModel @AssistedInject constructor(
             it.copy(
                 song = song,
                 position = 0L,
-                duration = PlayerState.DEFAULT_DURATION
+                duration = PlayerState.DEFAULT_DURATION,
+                isRepeating = false
             )
         }
     }
@@ -97,6 +98,7 @@ class PlayerViewModel @AssistedInject constructor(
                 val duration = controller.duration.takeIf { it > 0 }
                     ?: PlayerState.DEFAULT_DURATION
                 _uiState.update { it.copy(duration = duration) }
+                if (state == Player.STATE_ENDED) onNextClick()
             }
         })
 
