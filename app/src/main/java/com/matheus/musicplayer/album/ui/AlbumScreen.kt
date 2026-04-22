@@ -1,11 +1,11 @@
 package com.matheus.musicplayer.album.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -73,7 +74,7 @@ fun AlbumScreen(
             animatedState.error != null -> {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = animatedState.error,
+                        text = stringResource(animatedState.error),
                         color = Color.White,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -98,6 +99,9 @@ fun AlbumScreen(
                             .padding(horizontal = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
                         AsyncImage(
                             model = album.artworkUrl100,
                             contentDescription = null,

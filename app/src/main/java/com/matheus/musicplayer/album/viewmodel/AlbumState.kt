@@ -5,5 +5,5 @@ import com.matheus.musicplayer.domain.model.Album
 data class AlbumState(
     val isLoading: Boolean = true,
     val album: Album? = null,
-    val error: String? = null
+    val error: Int? = null
 )

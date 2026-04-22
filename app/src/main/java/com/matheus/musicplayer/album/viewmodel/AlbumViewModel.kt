@@ -2,6 +2,7 @@ package com.matheus.musicplayer.album.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.matheus.musicplayer.R
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetAlbumUseCase
 import com.matheus.musicplayer.domain.usecase.GetSongUseCase
@@ -48,7 +49,7 @@ class AlbumViewModel @AssistedInject constructor(
         val collectionId = song?.collectionId
 
         if (song == null || collectionId == null) {
-            _state.update { it.copy(isLoading = false, error = "Song not found") }
+            _state.update { it.copy(isLoading = false, error = R.string.song_not_found) }
             return@launch
         }
 
@@ -57,7 +58,7 @@ class AlbumViewModel @AssistedInject constructor(
                 _state.update { it.copy(isLoading = false, album = album) }
             }
             .onError {
-                _state.update { it.copy(isLoading = false, error = "Failed to load album") }
+                _state.update { it.copy(isLoading = false, error = R.string.failed_to_load_album) }
             }
     }
 

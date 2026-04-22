@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.song.viewmodel
+package com.matheus.musicplayer.song
 
 import androidx.paging.PagingData
 import app.cash.turbine.test
@@ -6,6 +6,8 @@ import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
+import com.matheus.musicplayer.song.viewmodel.SongListEvent
+import com.matheus.musicplayer.song.viewmodel.SongListViewModel
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coJustRun
@@ -40,9 +42,13 @@ internal class SongListViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        every { getRecentlyPlayedUseCase() } returns flowOf(PagingData.empty())
-        every { searchSongsUseCase(any()) } returns flowOf(PagingData.empty())
-        viewModel = SongListViewModel(searchSongsUseCase, getRecentlyPlayedUseCase, saveRecentlyPlayedUseCase)
+        every { getRecentlyPlayedUseCase() } returns flowOf(PagingData.Companion.empty())
+        every { searchSongsUseCase(any()) } returns flowOf(PagingData.Companion.empty())
+        viewModel = SongListViewModel(
+            searchSongsUseCase,
+            getRecentlyPlayedUseCase,
+            saveRecentlyPlayedUseCase
+        )
     }
 
     @After
@@ -74,78 +80,83 @@ internal class SongListViewModelTest {
     }
 
     @Test
-    fun `Songs Flow - Blank Query Calls GetRecentlyPlayedUseCase After Debounce`() = runTest(testDispatcher) {
-        val job = launch { viewModel.songs.collect { _ -> } }
-        advanceTimeBy(600)
+    fun `Songs Flow - Blank Query Calls GetRecentlyPlayedUseCase After Debounce`() =
+        runTest(testDispatcher) {
+            val job = launch { viewModel.songs.collect { _ -> } }
+            advanceTimeBy(600)
 
-        verify(exactly = 1) { getRecentlyPlayedUseCase() }
-        verify(exactly = 0) { searchSongsUseCase(any()) }
+            verify(exactly = 1) { getRecentlyPlayedUseCase() }
+            verify(exactly = 0) { searchSongsUseCase(any()) }
 
-        job.cancel()
-    }
-
-    @Test
-    fun `Songs Flow - Non-Blank Query Calls SearchSongsUseCase After Debounce`() = runTest(testDispatcher) {
-        val job = launch { viewModel.songs.collect { _ -> } }
-        advanceTimeBy(600)
-
-        viewModel.onSearchChange("Beatles")
-        advanceTimeBy(600)
-
-        verify(exactly = 1) { searchSongsUseCase("Beatles") }
-
-        job.cancel()
-    }
+            job.cancel()
+        }
 
     @Test
-    fun `Songs Flow - Debounce Prevents Intermediate Queries From Triggering Searches`() = runTest(testDispatcher) {
-        val job = launch { viewModel.songs.collect { _ -> } }
-        advanceTimeBy(600)
+    fun `Songs Flow - Non-Blank Query Calls SearchSongsUseCase After Debounce`() =
+        runTest(testDispatcher) {
+            val job = launch { viewModel.songs.collect { _ -> } }
+            advanceTimeBy(600)
 
-        viewModel.onSearchChange("B")
-        advanceTimeBy(100)
-        viewModel.onSearchChange("Be")
-        advanceTimeBy(100)
-        viewModel.onSearchChange("Beatles")
-        advanceTimeBy(600)
+            viewModel.onSearchChange("Beatles")
+            advanceTimeBy(600)
 
-        verify(exactly = 0) { searchSongsUseCase("B") }
-        verify(exactly = 0) { searchSongsUseCase("Be") }
-        verify(exactly = 1) { searchSongsUseCase("Beatles") }
+            verify(exactly = 1) { searchSongsUseCase("Beatles") }
 
-        job.cancel()
-    }
+            job.cancel()
+        }
 
     @Test
-    fun `Songs Flow - Same Query Twice Does Not Trigger Duplicate Search`() = runTest(testDispatcher) {
-        val job = launch { viewModel.songs.collect { _ -> } }
-        advanceTimeBy(600)
+    fun `Songs Flow - Debounce Prevents Intermediate Queries From Triggering Searches`() =
+        runTest(testDispatcher) {
+            val job = launch { viewModel.songs.collect { _ -> } }
+            advanceTimeBy(600)
 
-        viewModel.onSearchChange("Beatles")
-        advanceTimeBy(600)
-        viewModel.onSearchChange("Beatles")
-        advanceTimeBy(600)
+            viewModel.onSearchChange("B")
+            advanceTimeBy(100)
+            viewModel.onSearchChange("Be")
+            advanceTimeBy(100)
+            viewModel.onSearchChange("Beatles")
+            advanceTimeBy(600)
 
-        verify(exactly = 1) { searchSongsUseCase("Beatles") }
+            verify(exactly = 0) { searchSongsUseCase("B") }
+            verify(exactly = 0) { searchSongsUseCase("Be") }
+            verify(exactly = 1) { searchSongsUseCase("Beatles") }
 
-        job.cancel()
-    }
+            job.cancel()
+        }
 
     @Test
-    fun `Songs Flow - Clearing Search Query Calls GetRecentlyPlayedUseCase Again`() = runTest(testDispatcher) {
-        val job = launch { viewModel.songs.collect { _ -> } }
-        advanceTimeBy(600)
+    fun `Songs Flow - Same Query Twice Does Not Trigger Duplicate Search`() =
+        runTest(testDispatcher) {
+            val job = launch { viewModel.songs.collect { _ -> } }
+            advanceTimeBy(600)
 
-        viewModel.onSearchChange("Beatles")
-        advanceTimeBy(600)
+            viewModel.onSearchChange("Beatles")
+            advanceTimeBy(600)
+            viewModel.onSearchChange("Beatles")
+            advanceTimeBy(600)
 
-        viewModel.onSearchChange("")
-        advanceTimeBy(600)
+            verify(exactly = 1) { searchSongsUseCase("Beatles") }
 
-        verify(exactly = 2) { getRecentlyPlayedUseCase() }
+            job.cancel()
+        }
 
-        job.cancel()
-    }
+    @Test
+    fun `Songs Flow - Clearing Search Query Calls GetRecentlyPlayedUseCase Again`() =
+        runTest(testDispatcher) {
+            val job = launch { viewModel.songs.collect { _ -> } }
+            advanceTimeBy(600)
+
+            viewModel.onSearchChange("Beatles")
+            advanceTimeBy(600)
+
+            viewModel.onSearchChange("")
+            advanceTimeBy(600)
+
+            verify(exactly = 2) { getRecentlyPlayedUseCase() }
+
+            job.cancel()
+        }
 
     @Test
     fun `OnSongClick - Emits NavToPlayer Event With Correct TrackId`() = runTest(testDispatcher) {
