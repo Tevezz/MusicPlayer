@@ -54,6 +54,12 @@ class PlayerViewModel @AssistedInject constructor(
     }
 
     private fun loadSong(trackId: Long) = viewModelScope.launch {
+        loadSongData(trackId)
+        play()
+        loadAdjacentSongs(trackId)
+    }
+
+    private suspend fun loadSongData(trackId: Long) {
         val song = getSongUseCase(trackId).resultOrNull()
         _uiState.update {
             it.copy(
@@ -62,7 +68,9 @@ class PlayerViewModel @AssistedInject constructor(
                 duration = PlayerState.DEFAULT_DURATION
             )
         }
-        play()
+    }
+
+    private suspend fun loadAdjacentSongs(trackId: Long) {
         coroutineScope {
             val older = async { getSongPlayedBeforeUseCase(trackId) }
             val newer = async { getSongPlayedAfterUseCase(trackId) }

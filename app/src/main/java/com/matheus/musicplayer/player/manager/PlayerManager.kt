@@ -18,18 +18,25 @@ class PlayerManager(context: Context) {
     val controllerFlow: StateFlow<MediaController?> = _controllerFlow.asStateFlow()
 
     private var currentUrl: String? = null
+    private var pendingUrl: String? = null
 
     init {
         val token = SessionToken(context, ComponentName(context, PlaybackService::class.java))
         val future = MediaController.Builder(context, token).buildAsync()
-        future.addListener(
-            { _controllerFlow.value = future.get() },
-            MoreExecutors.directExecutor()
-        )
+        future.addListener({
+            _controllerFlow.value = future.get()
+            pendingUrl?.let { url ->
+                pendingUrl = null
+                play(url)
+            }
+        }, MoreExecutors.directExecutor())
     }
 
     fun play(url: String) {
-        val ctrl = _controllerFlow.value ?: return
+        val ctrl = _controllerFlow.value ?: run {
+            pendingUrl = url
+            return
+        }
         if (currentUrl == url) {
             if (ctrl.playbackState == Player.STATE_ENDED) ctrl.seekTo(0)
             ctrl.play()
