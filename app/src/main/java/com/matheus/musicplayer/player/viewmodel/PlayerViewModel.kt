@@ -112,8 +112,7 @@ class PlayerViewModel @AssistedInject constructor(
 
     private fun play() {
         val song = _uiState.value.song ?: return
-        val url = song.previewUrl ?: return
-        playerManager.play(url)
+        playerManager.play(song)
     }
 
     fun onPlayPause() {
