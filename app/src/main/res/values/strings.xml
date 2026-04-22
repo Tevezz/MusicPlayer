@@ -8,4 +8,9 @@
     <string name="search_for_a_song">No recently played songs\nStart searching to play music</string>
     <string name="song_not_found">Song not found</string>
     <string name="failed_to_load_album">Failed to load album</string>"
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
+    <string name="repeat">Repeat</string>
 </resources>

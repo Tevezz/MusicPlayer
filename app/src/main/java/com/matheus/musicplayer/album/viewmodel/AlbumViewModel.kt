@@ -48,6 +48,7 @@ class AlbumViewModel @AssistedInject constructor(
         val song = getSongUseCase(route.trackId).getOrNull()
         val collectionId = song?.collectionId
 
+        // Safeguard, but should not happen.
         if (song == null || collectionId == null) {
             _state.update { it.copy(isLoading = false, error = R.string.song_not_found) }
             return@launch

@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.matheus.musicplayer.util.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,22 +76,15 @@ fun PlayerProgressSlider(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = formatTime(position),
+                text = position.formatTime(),
                 style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.sp),
                 color = Color.White.copy(alpha = 0.6f)
             )
             Text(
-                text = "-${formatTime((duration - position).coerceAtLeast(0))}",
+                text = "-${(duration - position).coerceAtLeast(0).formatTime()}",
                 style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.sp),
                 color = Color.White.copy(alpha = 0.6f)
             )
         }
     }
-}
-
-private fun formatTime(ms: Long): String {
-    val totalSeconds = ms / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }

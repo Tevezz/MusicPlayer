@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.matheus.musicplayer.R
 
@@ -52,7 +53,9 @@ fun PlayerControls(
             ) { playing ->
                 Icon(
                     imageVector = if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = if (playing) "Pause" else "Play",
+                    contentDescription = if (playing) {
+                        stringResource(R.string.pause)
+                    } else stringResource(R.string.play),
                     tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )
@@ -67,7 +70,7 @@ fun PlayerControls(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward_bar),
-                contentDescription = "Previous",
+                contentDescription = stringResource(R.string.previous),
                 tint = if (isPreviousEnabled) Color.White else Color.White.copy(alpha = 0.35f),
                 modifier = Modifier.size(24.dp)
             )
@@ -81,7 +84,7 @@ fun PlayerControls(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward_bar),
-                contentDescription = "Next",
+                contentDescription = stringResource(R.string.next),
                 tint = if (isNextEnabled) Color.White else Color.White.copy(alpha = 0.35f),
                 modifier = Modifier
                     .size(24.dp)
@@ -103,7 +106,7 @@ fun PlayerControls(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_on_repeat),
-                    contentDescription = "Repeat",
+                    contentDescription = stringResource(R.string.repeat),
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
