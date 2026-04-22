@@ -45,8 +45,14 @@ class MainActivity : ComponentActivity() {
                         entry<Route.SongList> {
                             SongListScreen(
                                 viewModel = hiltViewModel(),
-                                onNavigateToPlayer = { backStack.add(Route.Player(it)) },
-                                onNavigateToAlbum = { backStack.add(Route.Album(it)) }
+                                onNavigateToPlayer = {
+                                    backStack.removeAll { route -> route is Route.Player }
+                                    backStack.add(Route.Player(it))
+                                },
+                                onNavigateToAlbum = {
+                                    backStack.removeAll { route -> route is Route.Album }
+                                    backStack.add(Route.Album(it))
+                                }
                             )
                         }
                         entry<Route.Player> { key ->
@@ -57,7 +63,10 @@ class MainActivity : ComponentActivity() {
                                         factory.create(key)
                                     }
                                 ),
-                                onNavigateToAlbum = { backStack.add(Route.Album(it)) },
+                                onNavigateToAlbum = {
+                                    backStack.removeAll { route -> route is Route.Album }
+                                    backStack.add(Route.Album(it))
+                                },
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }
@@ -69,7 +78,12 @@ class MainActivity : ComponentActivity() {
                                         factory.create(key)
                                     }
                                 ),
-                                onNavigateToPlayer = { backStack.add(Route.Player(it)) },
+                                onNavigateToPlayer = {
+                                    backStack.removeAll { route ->
+                                        route is Route.Album || route is Route.Player
+                                    }
+                                    backStack.add(Route.Player(it))
+                                },
                                 onNavigateBack = { backStack.removeLastOrNull() }
                             )
                         }
