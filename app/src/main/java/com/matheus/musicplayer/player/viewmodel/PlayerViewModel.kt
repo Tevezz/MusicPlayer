@@ -66,7 +66,7 @@ class PlayerViewModel @AssistedInject constructor(
         coroutineScope {
             val older = async { getSongPlayedBeforeUseCase(trackId) }
             val newer = async { getSongPlayedAfterUseCase(trackId) }
-            olderSongId = older.await()?.trackId
+            olderSongId = older.await().resultOrNull()?.trackId
             newerSongId = newer.await()?.trackId
         }
         _uiState.update {
