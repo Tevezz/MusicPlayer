@@ -52,7 +52,7 @@ fun PlayerProgressSlider(
             thumb = {
                 Box(
                     modifier = Modifier
-                        .size(12.dp)
+                        .size(16.dp)
                         .background(Color.White, CircleShape)
                 )
             },
@@ -61,12 +61,14 @@ fun PlayerProgressSlider(
                     sliderState = sliderState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(6.dp)
+                        .height(4.dp)
                         .clip(RoundedCornerShape(100)),
                     colors = SliderDefaults.colors(
                         activeTrackColor = Color.White,
                         inactiveTrackColor = Color.White.copy(alpha = 0.25f)
-                    )
+                    ),
+                    thumbTrackGapSize = 0.dp,
+                    drawStopIndicator = null
                 )
             }
         )

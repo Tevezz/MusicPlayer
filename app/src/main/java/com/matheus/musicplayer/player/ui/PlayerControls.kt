@@ -76,7 +76,7 @@ fun PlayerControls(
             )
         }
 
-        Spacer(modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
         IconButton(
             onClick = onNextClick,
