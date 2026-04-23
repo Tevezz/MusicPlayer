@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.player.ui
+package com.matheus.musicplayer.player.ui.fullscreen
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack

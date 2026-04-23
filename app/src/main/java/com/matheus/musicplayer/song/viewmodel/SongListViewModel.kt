@@ -8,6 +8,7 @@ import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
 import com.matheus.musicplayer.domain.usecase.SearchSongsUseCase
+import com.matheus.musicplayer.player.manager.PlayerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -25,10 +26,11 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SongListViewModel @Inject constructor(
+    private val playerManager: PlayerManager,
     private val searchSongsUseCase: SearchSongsUseCase,
     private val getRecentlyPlayedUseCase: GetRecentlyPlayedUseCase,
     private val saveRecentlyPlayedUseCase: SaveRecentlyPlayedUseCase
-) : ViewModel() {
+) : ViewModel(), PlayerManager by playerManager {
 
     private val _events = Channel<SongListEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()

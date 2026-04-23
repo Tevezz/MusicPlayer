@@ -49,6 +49,7 @@ import androidx.paging.compose.itemKey
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.album.ui.AlbumBottomSheet
 import com.matheus.musicplayer.domain.model.Song
+import com.matheus.musicplayer.player.ui.mini.MiniPlayer
 import com.matheus.musicplayer.song.viewmodel.SongListEvent
 import com.matheus.musicplayer.song.viewmodel.SongListViewModel
 import com.matheus.musicplayer.util.ObserveAsEvents
@@ -56,12 +57,13 @@ import com.matheus.musicplayer.util.ObserveAsEvents
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongListScreen(
-    viewModel: SongListViewModel = hiltViewModel(),
+    viewModel: SongListViewModel,
     onNavigateToPlayer: (Long) -> Unit,
     onNavigateToAlbum: (Long) -> Unit
 ) {
     val songs = viewModel.songs.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
 
     var isSearching by remember(searchQuery) {
         mutableStateOf(searchQuery.isNotEmpty())
@@ -79,7 +81,15 @@ fun SongListScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            AnimatedVisibility(playbackState.song.song != null) {
+                MiniPlayer(
+                    state = playbackState,
+                    onPlayPauseClick = viewModel::onPlayPause
+                )
+            }
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier

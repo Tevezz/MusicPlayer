@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.player.ui
+package com.matheus.musicplayer.player.ui.fullscreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +32,7 @@ fun PlayerScreen(
     onNavigateToAlbum: (Long) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.playbackState.collectAsStateWithLifecycle()
 
     val currentSong = state.song.song ?: return
 
@@ -86,11 +86,11 @@ fun PlayerScreen(
             PlayerControls(
                 isPlaying = state.controls.isPlaying,
                 isRepeating = state.controls.isRepeating,
-                isNextEnabled = state.controls.canGoNext,
-                isPreviousEnabled = state.controls.canGoPrevious,
+                isNextEnabled = state.controls.hasNext,
+                isPreviousEnabled = state.controls.hasPrevious,
                 onPlayPauseClick = viewModel::onPlayPause,
-                onNextClick = viewModel::onNextClick,
-                onPreviousClick = viewModel::onPreviousClick,
+                onNextClick = viewModel::onNext,
+                onPreviousClick = viewModel::onPrevious,
                 onRepeatClick = viewModel::onRepeatClick
             )
         }
