@@ -2,6 +2,7 @@ package com.matheus.musicplayer.player.ui.mini
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -39,11 +40,12 @@ fun MiniPlayer(
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
                 .padding(8.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 MiniPlayerSongArtwork(
@@ -58,11 +60,12 @@ fun MiniPlayer(
                 )
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
             MiniPlayerProgressSlider(
                 position = state.position.position,
                 duration = state.position.duration,
                 onSeek = {},
-                modifier = Modifier.height(12.dp)
+                modifier = Modifier.height(6.dp)
             )
         }
     }
