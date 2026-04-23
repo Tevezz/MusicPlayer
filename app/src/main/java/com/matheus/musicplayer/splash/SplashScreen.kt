@@ -21,21 +21,28 @@ import androidx.compose.ui.unit.dp
 import com.matheus.musicplayer.R
 import kotlinx.coroutines.delay
 
+private const val INITIAL_ALPHA = 0f
+private const val TARGET_ALPHA = 1f
+private const val INITIAL_ICON_SIZE = 90f
+private const val TARGET_ICON_SIZE = 200f
+private const val ANIMATION_DURATION = 1200
+private const val SPLASH_SCREEN_DELAY: Long = 300
+
 @Composable
 fun SplashScreen(onNavigateToMain: () -> Unit) {
-    val alpha = remember { Animatable(0f) }
-    val sizeDp = remember { Animatable(90f) }
+    val alpha = remember { Animatable(INITIAL_ALPHA) }
+    val sizeDp = remember { Animatable(INITIAL_ICON_SIZE) }
 
     LaunchedEffect(Unit) {
         sizeDp.animateTo(
-            targetValue = 200f,
-            animationSpec = tween(durationMillis = 1200)
+            targetValue = TARGET_ICON_SIZE,
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
         )
         alpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 1200)
+            targetValue = TARGET_ALPHA,
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
         )
-        delay(300)
+        delay(SPLASH_SCREEN_DELAY)
         onNavigateToMain()
     }
 
@@ -54,7 +61,6 @@ fun SplashScreen(onNavigateToMain: () -> Unit) {
             contentScale = ContentScale.FillBounds
         )
         Image(
-//            painter = painterResource(R.drawable.ic_splash_screen),
             painter = painterResource(R.drawable.ic_splash_screen),
             contentDescription = stringResource(R.string.app_name),
             modifier = Modifier
