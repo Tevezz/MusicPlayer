@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.data.datasource
+package com.matheus.musicplayer.data.datasource.local
 
 import androidx.paging.PagingSource
 import androidx.room.Dao

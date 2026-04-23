@@ -4,9 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.matheus.musicplayer.data.datasource.ITunesAPI
-import com.matheus.musicplayer.data.datasource.SongDao
-import com.matheus.musicplayer.data.datasource.SongPagingSource
+import com.matheus.musicplayer.data.datasource.local.SongDao
+import com.matheus.musicplayer.data.datasource.local.SongPagingConstants
+import com.matheus.musicplayer.data.datasource.local.SongPagingSource
+import com.matheus.musicplayer.data.datasource.remote.ITunesAPI
 import com.matheus.musicplayer.data.mapper.toEntity
 import com.matheus.musicplayer.data.mapper.toSong
 import com.matheus.musicplayer.domain.model.Song
@@ -22,11 +23,11 @@ internal class SongRepositoryImpl @Inject constructor(
 
     override fun searchSongs(searchQuery: String): Flow<PagingData<Song>> {
         return Pager(
-            config = PagingConfig( // TODO Move to paging source as a factory or constants at least
-                pageSize = 40,
-                initialLoadSize = 40,
-                prefetchDistance = 5,
-                enablePlaceholders = false
+            config = PagingConfig(
+                pageSize = SongPagingConstants.PAGE_SIZE,
+                initialLoadSize = SongPagingConstants.INITIAL_LOAD_SIZE,
+                prefetchDistance = SongPagingConstants.PREFETCH_DISTANCE,
+                enablePlaceholders = SongPagingConstants.ENABLE_PLACE_HOLDERS
             ),
             pagingSourceFactory = {
                 SongPagingSource(iTunesAPI, searchQuery)
@@ -37,8 +38,8 @@ internal class SongRepositoryImpl @Inject constructor(
     override fun getRecentlyPlayed(): Flow<PagingData<Song>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 40,
-                enablePlaceholders = false
+                pageSize = SongPagingConstants.PAGE_SIZE,
+                enablePlaceholders = SongPagingConstants.ENABLE_PLACE_HOLDERS
             ),
             pagingSourceFactory = {
                 songDao.getRecentlyPlayed()

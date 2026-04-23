@@ -1,6 +1,6 @@
 package com.matheus.musicplayer.data.repository
 
-import com.matheus.musicplayer.data.datasource.ITunesAPI
+import com.matheus.musicplayer.data.datasource.remote.ITunesAPI
 import com.matheus.musicplayer.data.model.remote.ITunesLookupResponseDto
 import com.matheus.musicplayer.data.model.remote.LookupItemResponseDto
 import com.matheus.musicplayer.data.model.remote.LookupResponseType

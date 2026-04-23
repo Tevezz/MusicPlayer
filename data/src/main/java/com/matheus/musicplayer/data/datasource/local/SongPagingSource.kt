@@ -1,7 +1,8 @@
-package com.matheus.musicplayer.data.datasource
+package com.matheus.musicplayer.data.datasource.local
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.matheus.musicplayer.data.datasource.remote.ITunesAPI
 import com.matheus.musicplayer.data.mapper.toSongList
 import com.matheus.musicplayer.domain.model.Song
 

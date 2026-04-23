@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.data.datasource
+package com.matheus.musicplayer.data.datasource.remote
 
 import com.matheus.musicplayer.data.model.remote.ITunesLookupResponseDto
 import com.matheus.musicplayer.data.model.remote.ITunesSearchResponseDto

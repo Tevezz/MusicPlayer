@@ -1,6 +1,6 @@
 package com.matheus.musicplayer.data.di
 
-import com.matheus.musicplayer.data.datasource.ITunesAPI
+import com.matheus.musicplayer.data.datasource.remote.ITunesAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

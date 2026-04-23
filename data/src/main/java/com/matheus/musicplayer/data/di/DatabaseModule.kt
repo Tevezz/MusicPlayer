@@ -3,7 +3,7 @@ package com.matheus.musicplayer.data.di
 import android.content.Context
 import androidx.room.Room
 import com.matheus.musicplayer.data.database.AppDatabase
-import com.matheus.musicplayer.data.datasource.SongDao
+import com.matheus.musicplayer.data.datasource.local.SongDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

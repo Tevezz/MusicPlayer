@@ -1,7 +1,7 @@
 package com.matheus.musicplayer.data.repository
 
-import com.matheus.musicplayer.data.datasource.ITunesAPI
-import com.matheus.musicplayer.data.datasource.SongDao
+import com.matheus.musicplayer.data.datasource.remote.ITunesAPI
+import com.matheus.musicplayer.data.datasource.local.SongDao
 import com.matheus.musicplayer.data.model.local.SongEntity
 import com.matheus.musicplayer.domain.model.Song
 import io.kotest.matchers.shouldBe

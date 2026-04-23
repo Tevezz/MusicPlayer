@@ -2,7 +2,7 @@ package com.matheus.musicplayer.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.matheus.musicplayer.data.datasource.SongDao
+import com.matheus.musicplayer.data.datasource.local.SongDao
 import com.matheus.musicplayer.data.model.local.SongEntity
 
 @Database(entities = [SongEntity::class], version = 1)
