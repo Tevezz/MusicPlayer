@@ -33,7 +33,7 @@ internal fun Song.toEntity(): SongEntity {
         artistName = artistName.orEmpty(),
         artworkUrl = artworkUrl100.orEmpty(),
         previewUrl = previewUrl,
-        collectionId = collectionId ?: 0, // TODO Needs to be not null
+        collectionId = collectionId ?: 0,
         collectionName = collectionName,
         trackTimeMillis = trackTimeMillis,
         lastPlayedAt = System.currentTimeMillis()

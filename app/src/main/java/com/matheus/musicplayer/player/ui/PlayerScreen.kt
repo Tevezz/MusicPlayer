@@ -1,18 +1,13 @@
 package com.matheus.musicplayer.player.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,12 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.album.ui.AlbumBottomSheet
 import com.matheus.musicplayer.player.viewmodel.PlayerEvent
@@ -39,10 +32,10 @@ fun PlayerScreen(
     onNavigateToAlbum: (Long) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val song = state.song ?: return
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val artwork = song.artworkUrl100?.replace("100x100", "600x600")
+    val currentSong = state.song.song ?: return
+
     var isShowAlbumBottomSheet by remember { mutableStateOf(false) }
 
     ObserveAsEvents(viewModel.events) { event ->
@@ -70,46 +63,20 @@ fun PlayerScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Box(
+            SongArtwork(
+                artworkUrl = currentSong.getHigherResArtworkUrl().orEmpty(),
+                trackName = currentSong.trackName.orEmpty(),
+                artistName = currentSong.artistName.orEmpty(),
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = artwork,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(264.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Column(modifier = Modifier.fillMaxWidth()) {
-
-                Text(
-                    text = song.trackName.orEmpty(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = song.artistName.orEmpty(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.White.copy(alpha = 0.7f)
-                )
-            }
+                    .fillMaxWidth()
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             PlayerProgressSlider(
-                position = state.position,
-                duration = state.duration,
+                position = state.position.position,
+                duration = state.position.duration,
                 onSeek = viewModel::seekTo,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -117,10 +84,10 @@ fun PlayerScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             PlayerControls(
-                isPlaying = state.isPlaying,
-                isRepeating = state.isRepeating,
-                isNextEnabled = state.canGoNext,
-                isPreviousEnabled = state.canGoPrevious,
+                isPlaying = state.controls.isPlaying,
+                isRepeating = state.controls.isRepeating,
+                isNextEnabled = state.controls.canGoNext,
+                isPreviousEnabled = state.controls.canGoPrevious,
                 onPlayPauseClick = viewModel::onPlayPause,
                 onNextClick = viewModel::onNextClick,
                 onPreviousClick = viewModel::onPreviousClick,
@@ -130,7 +97,7 @@ fun PlayerScreen(
 
         if (isShowAlbumBottomSheet) {
             AlbumBottomSheet(
-                song = song,
+                song = currentSong,
                 onDismiss = { isShowAlbumBottomSheet = false },
                 onViewAlbumClick = viewModel::onAlbumClick
             )

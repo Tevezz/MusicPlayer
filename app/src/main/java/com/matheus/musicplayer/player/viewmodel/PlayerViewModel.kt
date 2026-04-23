@@ -42,8 +42,8 @@ class PlayerViewModel @AssistedInject constructor(
     private val _events = Channel<PlayerEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    private val _uiState = MutableStateFlow(PlayerState())
-    val uiState = _uiState.asStateFlow()
+    private val _state = MutableStateFlow(PlayerState())
+    val state = _state.asStateFlow()
 
     private var olderSongId: Long? = null
     private var newerSongId: Long? = null
@@ -60,13 +60,11 @@ class PlayerViewModel @AssistedInject constructor(
     }
 
     private suspend fun loadSongData(trackId: Long) {
-        val song = getSongUseCase(trackId).resultOrNull()
-        _uiState.update {
+        _state.update {
             it.copy(
-                song = song,
-                position = 0L,
-                duration = PlayerState.DEFAULT_DURATION,
-                isRepeating = false
+                song = SongState(getSongUseCase(trackId).resultOrNull()),
+                controls = ControlsState(),
+                position = PositionState()
             )
         }
     }
@@ -78,10 +76,12 @@ class PlayerViewModel @AssistedInject constructor(
             olderSongId = older.await().resultOrNull()?.trackId
             newerSongId = newer.await().resultOrNull()?.trackId
         }
-        _uiState.update {
+        _state.update {
             it.copy(
-                canGoNext = olderSongId != null,
-                canGoPrevious = newerSongId != null
+                controls = it.controls.copy(
+                    canGoNext = olderSongId != null,
+                    canGoPrevious = newerSongId != null
+                )
             )
         }
     }
@@ -91,32 +91,32 @@ class PlayerViewModel @AssistedInject constructor(
 
         controller.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                _uiState.update { it.copy(isPlaying = isPlaying) }
+                _state.update { it.copy(controls = it.controls.copy(isPlaying = isPlaying)) }
             }
 
-            override fun onPlaybackStateChanged(state: Int) {
+            override fun onPlaybackStateChanged(playbackState: Int) {
                 val duration = controller.duration.takeIf { it > 0 }
-                    ?: PlayerState.DEFAULT_DURATION
-                _uiState.update { it.copy(duration = duration) }
-                if (state == Player.STATE_ENDED) onNextClick()
+                    ?: PositionState.DEFAULT_DURATION
+                _state.update { it.copy(position = it.position.copy(duration = duration)) }
+                if (playbackState == Player.STATE_ENDED) onNextClick()
             }
         })
 
         while (true) {
-            if (_uiState.value.isPlaying) {
-                _uiState.update { it.copy(position = controller.currentPosition) }
+            if (_state.value.controls.isPlaying) {
+                _state.update { it.copy(position = it.position.copy(position = controller.currentPosition)) }
             }
             delay(100)
         }
     }
 
     private fun play() {
-        val song = _uiState.value.song ?: return
+        val song = _state.value.song.song ?: return
         playerManager.play(song)
     }
 
     fun onPlayPause() {
-        if (_uiState.value.isPlaying) {
+        if (_state.value.controls.isPlaying) {
             playerManager.pause()
         } else {
             play()
@@ -128,8 +128,8 @@ class PlayerViewModel @AssistedInject constructor(
     }
 
     fun onRepeatClick() {
-        val isRepeating = !_uiState.value.isRepeating
-        _uiState.update { it.copy(isRepeating = isRepeating) }
+        val isRepeating = !_state.value.controls.isRepeating
+        _state.update { it.copy(controls = it.controls.copy(isRepeating = isRepeating)) }
         playerManager.setRepeatMode(isRepeating)
     }
 
