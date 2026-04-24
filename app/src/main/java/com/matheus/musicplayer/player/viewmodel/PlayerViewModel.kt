@@ -27,10 +27,6 @@ class PlayerViewModel @AssistedInject constructor(
     private val _events = Channel<PlayerEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    init {
-        playerManager.loadAndPlay(route.trackId)
-    }
-
     fun onRepeatClick() {
         val isRepeating = !playbackState.value.controls.isRepeating
         playerManager.setRepeatMode(isRepeating)

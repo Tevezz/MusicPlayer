@@ -9,16 +9,16 @@ import com.matheus.musicplayer.player.manager.PlayerManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ActivityRetainedComponent::class)
 object PlayerModule {
 
     @Provides
-    @Singleton
+    @ActivityRetainedScoped
     fun providePlayerManager(
         @ApplicationContext context: Context,
         getSongUseCase: GetSongUseCase,

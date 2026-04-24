@@ -62,13 +62,14 @@ class MainActivity : ComponentActivity() {
 
                         // Player Screen
                         entry<Route.Player> { key ->
+                            val viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
+                                key = key.trackId.toString(),
+                                creationCallback = { factory ->
+                                    factory.create(key)
+                                }
+                            ).also { it.loadAndPlay(key.trackId) } // Need to call here for stability.
                             PlayerScreen(
-                                viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
-                                    key = key.trackId.toString(),
-                                    creationCallback = { factory ->
-                                        factory.create(key)
-                                    }
-                                ),
+                                viewModel = viewModel,
                                 onNavigateToAlbum = {
                                     backStack.removeAll { route -> route is Route.Album }
                                     backStack.add(Route.Album(it))
