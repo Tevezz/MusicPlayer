@@ -1,5 +1,6 @@
 package com.matheus.musicplayer.player.ui.mini
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,11 +29,10 @@ fun MiniPlayer(
     Surface(
         modifier = Modifier
             .padding(16.dp)
-            .navigationBarsPadding()
-            .clip(RoundedCornerShape(12.dp)),
-        color = Color.White.copy(
-            alpha = 0.15f
-        ),
+            .navigationBarsPadding(),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(width = 1.dp, color = Color.White.copy(alpha = 0.2f)),
+        color = Color.Black,
         tonalElevation = 8.dp,
         shadowElevation = 4.dp
     ) {

@@ -65,7 +65,7 @@ fun SongListScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
 
-    var isSearching by remember(searchQuery) {
+    var isSearching by remember {
         mutableStateOf(searchQuery.isNotEmpty())
     }
 
