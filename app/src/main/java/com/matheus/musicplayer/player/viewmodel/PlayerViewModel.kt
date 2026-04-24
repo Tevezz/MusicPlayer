@@ -4,25 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.player.manager.PlayerManager
-import com.matheus.musicplayer.route.Route
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = PlayerViewModel.Factory::class)
-class PlayerViewModel @AssistedInject constructor(
-    @Assisted private val route: Route.Player,
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
     private val playerManager: PlayerManager
 ) : ViewModel(), PlayerManager by playerManager {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(route: Route.Player): PlayerViewModel
-    }
 
     private val _events = Channel<PlayerEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()

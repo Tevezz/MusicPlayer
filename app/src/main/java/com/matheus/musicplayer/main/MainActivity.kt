@@ -62,12 +62,8 @@ class MainActivity : ComponentActivity() {
 
                         // Player Screen
                         entry<Route.Player> { key ->
-                            val viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
-                                key = key.trackId.toString(),
-                                creationCallback = { factory ->
-                                    factory.create(key)
-                                }
-                            ).also { it.loadAndPlay(key.trackId) } // Need to call here for stability.
+                            val viewModel = hiltViewModel<PlayerViewModel>()
+                                .also { it.loadAndPlay(key.trackId) } // Need to call here for stability.
                             PlayerScreen(
                                 viewModel = viewModel,
                                 onNavigateToAlbum = {
