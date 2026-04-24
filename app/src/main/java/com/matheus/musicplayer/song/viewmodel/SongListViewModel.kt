@@ -64,4 +64,8 @@ class SongListViewModel @Inject constructor(
     fun onAlbumClick(song: Song) = viewModelScope.launch {
         _events.send(SongListEvent.NavToAlbum(song.trackId))
     }
+
+    fun onMiniPlayerClick(song: Song) = viewModelScope.launch {
+        _events.send(SongListEvent.NavToPlayer(song.trackId))
+    }
 }

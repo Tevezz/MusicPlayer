@@ -13,7 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.matheus.musicplayer.player.manager.PlaybackState
@@ -21,7 +20,8 @@ import com.matheus.musicplayer.player.manager.PlaybackState
 @Composable
 fun MiniPlayer(
     state: PlaybackState,
-    onPlayPauseClick: () -> Unit
+    onPlayPauseClick: () -> Unit,
+    onMiniPlayerClick: () -> Unit
 ) {
 
     val song = state.song.song ?: return
@@ -33,8 +33,7 @@ fun MiniPlayer(
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(width = 1.dp, color = Color.White.copy(alpha = 0.2f)),
         color = Color.Black,
-        tonalElevation = 8.dp,
-        shadowElevation = 4.dp
+        onClick = onMiniPlayerClick
     ) {
 
         Column (

@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -83,10 +82,11 @@ fun SongListScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            AnimatedVisibility(playbackState.song.song != null) {
+            playbackState.song.song?.also { song ->
                 MiniPlayer(
                     state = playbackState,
-                    onPlayPauseClick = viewModel::onPlayPause
+                    onPlayPauseClick = viewModel::onPlayPause,
+                    onMiniPlayerClick = { viewModel.onMiniPlayerClick(song) }
                 )
             }
         }

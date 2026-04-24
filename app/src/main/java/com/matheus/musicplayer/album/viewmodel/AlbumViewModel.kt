@@ -65,10 +65,14 @@ class AlbumViewModel @AssistedInject constructor(
             }
     }
 
-    fun onSongClicked(song: Song) = viewModelScope.launch {
+    fun onSongClick(song: Song) = viewModelScope.launch {
         saveRecentlyPlayedUseCase(song)
             .onSuspendSuccess {
                 _events.send(AlbumEvent.NavToPlayer(song.trackId))
             }
+    }
+
+    fun onMiniPlayerClick(song: Song) = viewModelScope.launch {
+        _events.send(AlbumEvent.NavToPlayer(song.trackId))
     }
 }

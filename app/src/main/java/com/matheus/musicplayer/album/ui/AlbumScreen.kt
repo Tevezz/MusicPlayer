@@ -1,7 +1,6 @@
 package com.matheus.musicplayer.album.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -95,10 +94,11 @@ fun AlbumScreen(
                         )
                     },
                     bottomBar = {
-                        AnimatedVisibility(playbackState.song.song != null) {
+                        playbackState.song.song?.also { song ->
                             MiniPlayer(
                                 state = playbackState,
-                                onPlayPauseClick = viewModel::onPlayPause
+                                onPlayPauseClick = viewModel::onPlayPause,
+                                onMiniPlayerClick = { viewModel.onMiniPlayerClick(song) }
                             )
                         }
                     }
@@ -150,7 +150,7 @@ fun AlbumScreen(
                                 SongListItem(
                                     song = song,
                                     showMoreIcon = false,
-                                    onClick = viewModel::onSongClicked,
+                                    onClick = viewModel::onSongClick,
                                     onMoreClick = {}
                                 )
                             }
