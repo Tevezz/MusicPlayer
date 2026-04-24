@@ -102,10 +102,15 @@ class PlayerManagerImpl(
             val song = getSongUseCase(trackId).resultOrNull() ?: return@launch
             olderSong = null
             newerSong = null
+            val isSameSong = _state.value.song.song?.trackId == song.trackId
             _state.update {
                 it.copy(
                     song = SongState(song),
-                    controls = ControlsState(),
+                    controls = it.controls.copy(
+                        hasNext = false,
+                        hasPrevious = false,
+                        isRepeating = if (isSameSong) it.controls.isRepeating else false
+                    ),
                     position = PositionState()
                 )
             }
