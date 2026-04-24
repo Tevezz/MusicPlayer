@@ -11,7 +11,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.matheus.musicplayer.album.ui.AlbumScreen
 import com.matheus.musicplayer.album.viewmodel.AlbumViewModel
-import com.matheus.musicplayer.player.ui.PlayerScreen
+import com.matheus.musicplayer.player.ui.fullscreen.PlayerScreen
 import com.matheus.musicplayer.player.viewmodel.PlayerViewModel
 import com.matheus.musicplayer.route.Route
 import com.matheus.musicplayer.song.ui.SongListScreen
@@ -62,13 +62,10 @@ class MainActivity : ComponentActivity() {
 
                         // Player Screen
                         entry<Route.Player> { key ->
+                            val viewModel = hiltViewModel<PlayerViewModel>()
+                                .also { it.loadAndPlay(key.trackId) } // Need to call here for stability.
                             PlayerScreen(
-                                viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(
-                                    key = key.trackId.toString(),
-                                    creationCallback = { factory ->
-                                        factory.create(key)
-                                    }
-                                ),
+                                viewModel = viewModel,
                                 onNavigateToAlbum = {
                                     backStack.removeAll { route -> route is Route.Album }
                                     backStack.add(Route.Album(it))

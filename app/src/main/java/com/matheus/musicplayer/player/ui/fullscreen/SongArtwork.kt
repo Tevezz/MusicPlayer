@@ -1,4 +1,4 @@
-package com.matheus.musicplayer.player.ui
+package com.matheus.musicplayer.player.ui.fullscreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

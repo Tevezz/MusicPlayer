@@ -7,6 +7,7 @@ import com.matheus.musicplayer.domain.model.Song
 import com.matheus.musicplayer.domain.usecase.GetAlbumUseCase
 import com.matheus.musicplayer.domain.usecase.GetSongUseCase
 import com.matheus.musicplayer.domain.usecase.SaveRecentlyPlayedUseCase
+import com.matheus.musicplayer.player.manager.PlayerManager
 import com.matheus.musicplayer.route.Route
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -22,10 +23,11 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = AlbumViewModel.Factory::class)
 class AlbumViewModel @AssistedInject constructor(
     @Assisted private val route: Route.Album,
+    private val playerManager: PlayerManager,
     private val getSongUseCase: GetSongUseCase,
     private val getAlbumUseCase: GetAlbumUseCase,
     private val saveRecentlyPlayedUseCase: SaveRecentlyPlayedUseCase
-) : ViewModel() {
+) : ViewModel(), PlayerManager by playerManager {
 
     @AssistedFactory
     interface Factory {
@@ -63,10 +65,14 @@ class AlbumViewModel @AssistedInject constructor(
             }
     }
 
-    fun onSongClicked(song: Song) = viewModelScope.launch {
+    fun onSongClick(song: Song) = viewModelScope.launch {
         saveRecentlyPlayedUseCase(song)
             .onSuspendSuccess {
                 _events.send(AlbumEvent.NavToPlayer(song.trackId))
             }
+    }
+
+    fun onMiniPlayerClick(song: Song) = viewModelScope.launch {
+        _events.send(AlbumEvent.NavToPlayer(song.trackId))
     }
 }

@@ -33,7 +33,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.matheus.musicplayer.album.viewmodel.AlbumEvent
 import com.matheus.musicplayer.album.viewmodel.AlbumViewModel
-import com.matheus.musicplayer.player.ui.PlayerTopBar
+import com.matheus.musicplayer.player.ui.fullscreen.PlayerTopBar
+import com.matheus.musicplayer.player.ui.mini.MiniPlayer
 import com.matheus.musicplayer.song.ui.SongListItem
 import com.matheus.musicplayer.util.ObserveAsEvents
 
@@ -44,6 +45,7 @@ fun AlbumScreen(
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -90,6 +92,15 @@ fun AlbumScreen(
                             title = album.collectionName,
                             onNavigateBack = onNavigateBack
                         )
+                    },
+                    bottomBar = {
+                        playbackState.song.song?.also { song ->
+                            MiniPlayer(
+                                state = playbackState,
+                                onPlayPauseClick = viewModel::onPlayPause,
+                                onMiniPlayerClick = { viewModel.onMiniPlayerClick(song) }
+                            )
+                        }
                     }
                 ) { padding ->
                     Column(
@@ -139,7 +150,7 @@ fun AlbumScreen(
                                 SongListItem(
                                     song = song,
                                     showMoreIcon = false,
-                                    onClick = viewModel::onSongClicked,
+                                    onClick = viewModel::onSongClick,
                                     onMoreClick = {}
                                 )
                             }

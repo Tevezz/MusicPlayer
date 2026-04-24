@@ -1,10 +1,10 @@
-package com.matheus.musicplayer.player.viewmodel
+package com.matheus.musicplayer.player.manager
 
 import androidx.compose.runtime.Immutable
 import com.matheus.musicplayer.domain.model.Song
 
 @Immutable
-data class PlayerState(
+data class PlaybackState(
     val song: SongState = SongState(),
     val controls: ControlsState = ControlsState(),
     val position: PositionState = PositionState()
@@ -16,8 +16,8 @@ data class SongState(val song: Song? = null)
 data class ControlsState(
     val isPlaying: Boolean = false,
     val isRepeating: Boolean = false,
-    val canGoNext: Boolean = false,
-    val canGoPrevious: Boolean = false
+    val hasNext: Boolean = false,
+    val hasPrevious: Boolean = false
 )
 
 data class PositionState(

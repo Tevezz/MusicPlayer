@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -49,6 +48,7 @@ import androidx.paging.compose.itemKey
 import com.matheus.musicplayer.R
 import com.matheus.musicplayer.album.ui.AlbumBottomSheet
 import com.matheus.musicplayer.domain.model.Song
+import com.matheus.musicplayer.player.ui.mini.MiniPlayer
 import com.matheus.musicplayer.song.viewmodel.SongListEvent
 import com.matheus.musicplayer.song.viewmodel.SongListViewModel
 import com.matheus.musicplayer.util.ObserveAsEvents
@@ -56,14 +56,15 @@ import com.matheus.musicplayer.util.ObserveAsEvents
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongListScreen(
-    viewModel: SongListViewModel = hiltViewModel(),
+    viewModel: SongListViewModel,
     onNavigateToPlayer: (Long) -> Unit,
     onNavigateToAlbum: (Long) -> Unit
 ) {
     val songs = viewModel.songs.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
 
-    var isSearching by remember(searchQuery) {
+    var isSearching by remember {
         mutableStateOf(searchQuery.isNotEmpty())
     }
 
@@ -79,7 +80,16 @@ fun SongListScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            playbackState.song.song?.also { song ->
+                MiniPlayer(
+                    state = playbackState,
+                    onPlayPauseClick = viewModel::onPlayPause,
+                    onMiniPlayerClick = { viewModel.onMiniPlayerClick(song) }
+                )
+            }
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier

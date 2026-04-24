@@ -26,7 +26,7 @@ private const val TARGET_ALPHA = 1f
 private const val INITIAL_ICON_SIZE = 90f
 private const val TARGET_ICON_SIZE = 200f
 private const val ANIMATION_DURATION = 1200
-private const val SPLASH_SCREEN_DELAY: Long = 300
+private const val SPLASH_SCREEN_DELAY: Long = 500
 
 @Composable
 fun SplashScreen(onNavigateToMain: () -> Unit) {
