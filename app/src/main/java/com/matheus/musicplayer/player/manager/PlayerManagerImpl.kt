@@ -33,7 +33,7 @@ class PlayerManagerImpl(
     private val getSongUseCase: GetSongUseCase,
     private val getSongPlayedBeforeUseCase: GetSongPlayedBeforeUseCase,
     private val getSongPlayedAfterUseCase: GetSongPlayedAfterUseCase
-): PlayerManager {
+) : PlayerManager {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val _state = MutableStateFlow(PlaybackState())
     override val playbackState: StateFlow<PlaybackState> = _state.asStateFlow()

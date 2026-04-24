@@ -36,7 +36,7 @@ fun MiniPlayer(
         onClick = onMiniPlayerClick
     ) {
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)

@@ -194,17 +194,18 @@ internal class SongListViewModelTest {
     }
 
     @Test
-    fun `OnSongClick - Does Not Emit NavToPlayer Event When Save Fails`() = runTest(testDispatcher) {
-        val song = buildSong(trackId = 42L)
-        coEvery { saveRecentlyPlayedUseCase(song) } returns Response.Error(Exception())
+    fun `OnSongClick - Does Not Emit NavToPlayer Event When Save Fails`() =
+        runTest(testDispatcher) {
+            val song = buildSong(trackId = 42L)
+            coEvery { saveRecentlyPlayedUseCase(song) } returns Response.Error(Exception())
 
-        viewModel.events.test {
-            viewModel.onSongClick(song)
-            advanceTimeBy(100)
+            viewModel.events.test {
+                viewModel.onSongClick(song)
+                advanceTimeBy(100)
 
-            cancelAndConsumeRemainingEvents()
+                cancelAndConsumeRemainingEvents()
+            }
         }
-    }
 
     @Test
     fun `OnAlbumClick - Emits NavToAlbum Event With Correct TrackId`() = runTest(testDispatcher) {
@@ -223,18 +224,19 @@ internal class SongListViewModelTest {
     }
 
     @Test
-    fun `OnMiniPlayerClick - Emits NavToPlayer Event With Correct TrackId`() = runTest(testDispatcher) {
-        val song = buildSong(trackId = 55L)
+    fun `OnMiniPlayerClick - Emits NavToPlayer Event With Correct TrackId`() =
+        runTest(testDispatcher) {
+            val song = buildSong(trackId = 55L)
 
-        viewModel.events.test {
-            viewModel.onMiniPlayerClick(song)
-            advanceTimeBy(100)
+            viewModel.events.test {
+                viewModel.onMiniPlayerClick(song)
+                advanceTimeBy(100)
 
-            val event = awaitItem()
-            event.shouldBeInstanceOf<SongListEvent.NavToPlayer>()
-            event.trackId shouldBe 55L
+                val event = awaitItem()
+                event.shouldBeInstanceOf<SongListEvent.NavToPlayer>()
+                event.trackId shouldBe 55L
 
-            cancelAndConsumeRemainingEvents()
+                cancelAndConsumeRemainingEvents()
+            }
         }
-    }
 }

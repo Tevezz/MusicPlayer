@@ -57,28 +57,30 @@ internal class PlayerViewModelTest {
     )
 
     @Test
-    fun `OnRepeatClick - When Not Repeating, Calls SetRepeatMode With True`() = runTest(testDispatcher) {
-        every { playerManager.playbackState } returns MutableStateFlow(
-            PlaybackState(controls = ControlsState(isRepeating = false))
-        )
-        viewModel = PlayerViewModel(playerManager)
+    fun `OnRepeatClick - When Not Repeating, Calls SetRepeatMode With True`() =
+        runTest(testDispatcher) {
+            every { playerManager.playbackState } returns MutableStateFlow(
+                PlaybackState(controls = ControlsState(isRepeating = false))
+            )
+            viewModel = PlayerViewModel(playerManager)
 
-        viewModel.onRepeatClick()
+            viewModel.onRepeatClick()
 
-        verify(exactly = 1) { playerManager.setRepeatMode(true) }
-    }
+            verify(exactly = 1) { playerManager.setRepeatMode(true) }
+        }
 
     @Test
-    fun `OnRepeatClick - When Repeating, Calls SetRepeatMode With False`() = runTest(testDispatcher) {
-        every { playerManager.playbackState } returns MutableStateFlow(
-            PlaybackState(controls = ControlsState(isRepeating = true))
-        )
-        viewModel = PlayerViewModel(playerManager)
+    fun `OnRepeatClick - When Repeating, Calls SetRepeatMode With False`() =
+        runTest(testDispatcher) {
+            every { playerManager.playbackState } returns MutableStateFlow(
+                PlaybackState(controls = ControlsState(isRepeating = true))
+            )
+            viewModel = PlayerViewModel(playerManager)
 
-        viewModel.onRepeatClick()
+            viewModel.onRepeatClick()
 
-        verify(exactly = 1) { playerManager.setRepeatMode(false) }
-    }
+            verify(exactly = 1) { playerManager.setRepeatMode(false) }
+        }
 
     @Test
     fun `OnAlbumClick - Emits NavToAlbum Event With Correct TrackId`() = runTest(testDispatcher) {
